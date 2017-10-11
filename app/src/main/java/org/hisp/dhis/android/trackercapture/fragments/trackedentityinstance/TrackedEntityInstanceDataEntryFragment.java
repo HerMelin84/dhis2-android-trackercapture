@@ -35,6 +35,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -76,6 +77,7 @@ import java.util.Map;
 public class TrackedEntityInstanceDataEntryFragment extends
         DataEntryFragment<TrackedEntityInstanceDataEntryFragmentForm>
         implements OnBackPressedListener {
+
     public static final String TAG = TrackedEntityInstanceDataEntryFragment.class.getSimpleName();
     private static final String EMPTY_FIELD = "";
     public static final String ORG_UNIT_ID = "extra:orgUnitId";
@@ -83,8 +85,11 @@ public class TrackedEntityInstanceDataEntryFragment extends
     public static final String TRACKEDENTITYINSTANCE_ID = "extra:TrackedEntityInstanceId";
     public static final String PROGRAMRULES_FORCED_TRIGGER = "forced";
     public static final String EXTRA_NAVIGATION = "extra:Navigation";
+
     public static boolean backNavigation;
+
     private TrackedEntityInstanceDataEntryFragmentForm form;
+
     private SaveThread saveThread;
     private Map<String, List<ProgramRule>> programRulesForTrackedEntityAttributes;
 
@@ -101,8 +106,7 @@ public class TrackedEntityInstanceDataEntryFragment extends
 
     public static TrackedEntityInstanceDataEntryFragment newInstance(String unitId,
             String programId, String enrollmentDate, String incidentDate) {
-        TrackedEntityInstanceDataEntryFragment
-                fragment = new TrackedEntityInstanceDataEntryFragment();
+        TrackedEntityInstanceDataEntryFragment fragment = new TrackedEntityInstanceDataEntryFragment();
         Bundle args = new Bundle();
         args.putString(ORG_UNIT_ID, unitId);
         args.putString(PROGRAM_ID, programId);
@@ -113,8 +117,8 @@ public class TrackedEntityInstanceDataEntryFragment extends
     public static TrackedEntityInstanceDataEntryFragment newInstance(String unitId,
             String programId, long trackedEntityInstanceId, String enrollmentDate,
             String incidentDate) {
-        TrackedEntityInstanceDataEntryFragment
-                fragment = new TrackedEntityInstanceDataEntryFragment();
+        Log.w("myTag", "new Instance made");
+        TrackedEntityInstanceDataEntryFragment fragment = new TrackedEntityInstanceDataEntryFragment();
         Bundle args = new Bundle();
         args.putString(ORG_UNIT_ID, unitId);
         args.putString(PROGRAM_ID, programId);
@@ -146,6 +150,7 @@ public class TrackedEntityInstanceDataEntryFragment extends
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        Log.w("myTag", "onViewCreated called");
         super.onViewCreated(view, savedInstanceState);
 
         if (getActivity() instanceof AppCompatActivity) {
@@ -157,12 +162,14 @@ public class TrackedEntityInstanceDataEntryFragment extends
 
     @Override
     public Loader<TrackedEntityInstanceDataEntryFragmentForm> onCreateLoader(int id, Bundle args) {
+        Log.w("myTag", "onCreateLoader called");
         if (LOADER_ID == id && isAdded()) {
             // Adding Tables for tracking here is dangerous (since MetaData updates in background
             // can trigger reload of values from db which will reset all fields).
             // Hence, it would be more safe not to track any changes in any tables
             List<Class<? extends Model>> modelsToTrack = new ArrayList<>();
             Bundle fragmentArguments = args.getBundle(EXTRA_ARGUMENTS);
+            assert fragmentArguments != null;
             String orgUnitId = fragmentArguments.getString(ORG_UNIT_ID);
             String programId = fragmentArguments.getString(PROGRAM_ID);
             long trackedEntityInstance = fragmentArguments.getLong(TRACKEDENTITYINSTANCE_ID, -1);
@@ -179,6 +186,7 @@ public class TrackedEntityInstanceDataEntryFragment extends
     @Override
     public void onLoadFinished(Loader<TrackedEntityInstanceDataEntryFragmentForm> loader,
             TrackedEntityInstanceDataEntryFragmentForm data) {
+        Log.w("myTag", "onLoadFinished called");
         if (loader.getId() == LOADER_ID && isAdded()) {
             progressBar.setVisibility(View.GONE);
             listView.setVisibility(View.VISIBLE);
@@ -248,6 +256,7 @@ public class TrackedEntityInstanceDataEntryFragment extends
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        Log.w("myTag", "onItemSelected");
     }
 
     @Override
@@ -505,7 +514,7 @@ public class TrackedEntityInstanceDataEntryFragment extends
 
             flagDataChanged(false);
         }
-
+        assert form != null;
         for (ProgramTrackedEntityAttribute ptea : form.getProgram()
                 .getProgramTrackedEntityAttributes()) {
             if (ptea.getTrackedEntityAttribute().isGenerated()) {

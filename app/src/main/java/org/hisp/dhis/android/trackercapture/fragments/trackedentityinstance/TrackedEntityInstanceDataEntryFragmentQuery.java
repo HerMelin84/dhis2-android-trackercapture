@@ -35,6 +35,7 @@ import org.hisp.dhis.android.sdk.controllers.GpsController;
 import org.hisp.dhis.android.sdk.controllers.metadata.MetaDataController;
 import org.hisp.dhis.android.sdk.controllers.tracker.TrackerController;
 import org.hisp.dhis.android.sdk.persistence.loaders.Query;
+import org.hisp.dhis.android.sdk.persistence.models.OptionSet;
 import org.hisp.dhis.android.sdk.persistence.models.OrganisationUnit;
 import org.hisp.dhis.android.sdk.persistence.models.Program;
 import org.hisp.dhis.android.sdk.persistence.models.ProgramTrackedEntityAttribute;
@@ -67,21 +68,13 @@ class TrackedEntityInstanceDataEntryFragmentQuery implements Query<TrackedEntity
 
     @Override
     public TrackedEntityInstanceDataEntryFragmentForm query(Context context) {
-        TrackedEntityInstanceDataEntryFragmentForm
-                mForm = new TrackedEntityInstanceDataEntryFragmentForm();
+        TrackedEntityInstanceDataEntryFragmentForm mForm = new TrackedEntityInstanceDataEntryFragmentForm();
         final Program mProgram = MetaDataController.getProgram(mProgramId);
         final OrganisationUnit mOrgUnit = MetaDataController.getOrganisationUnit(mOrgUnitId);
 
-        if (mProgram == null || mOrgUnit == null) {
-            return mForm;
-        }
+        if (mProgram == null || mOrgUnit == null) return mForm;
 
-        if (mTrackedEntityInstanceId < 0) {
-            currentTrackedEntityInstance = new TrackedEntityInstance(mProgram, mOrgUnitId);
-        } else {
-            currentTrackedEntityInstance = TrackerController.getTrackedEntityInstance(
-                    mTrackedEntityInstanceId);
-        }
+        currentTrackedEntityInstance = getCurrentTrackedEntityInstance(mProgram);
 
         mForm.setProgram(mProgram);
         mForm.setOrganisationUnit(mOrgUnit);
@@ -90,17 +83,17 @@ class TrackedEntityInstanceDataEntryFragmentQuery implements Query<TrackedEntity
         mForm.setTrackedEntityInstance(currentTrackedEntityInstance);
         mForm.setTrackedEntityAttributeValueMap(new HashMap<String, TrackedEntityAttributeValue>());
 
-        List<TrackedEntityAttributeValue> trackedEntityAttributeValues = new ArrayList<>();
-        List<ProgramTrackedEntityAttribute> programTrackedEntityAttributes =
-                mProgram.getProgramTrackedEntityAttributes();
         List<Row> dataEntryRows = new ArrayList<>();
+        List<TrackedEntityAttributeValue> trackedEntityAttributeValues = new ArrayList<>();
+
+        List<ProgramTrackedEntityAttribute> programTrackedEntityAttributes = mProgram.getProgramTrackedEntityAttributes();
 
         for (ProgramTrackedEntityAttribute ptea : programTrackedEntityAttributes) {
-            TrackedEntityAttributeValue value = TrackerController.getTrackedEntityAttributeValue(
-                    ptea.getTrackedEntityAttributeId(), currentTrackedEntityInstance.getLocalId());
-            if (value != null) {
-                trackedEntityAttributeValues.add(value);
-            } else {
+
+            TrackedEntityAttributeValue value = getTrackedEntityAttributeValue(ptea);
+
+            if (value != null) trackedEntityAttributeValues.add(value);
+            else {
                 TrackedEntityAttribute trackedEntityAttribute =
                         MetaDataController.getTrackedEntityAttribute(
                                 ptea.getTrackedEntityAttributeId());
@@ -125,46 +118,42 @@ class TrackedEntityInstanceDataEntryFragmentQuery implements Query<TrackedEntity
                 }
             }
         }
+
         for (int i = 0; i < programTrackedEntityAttributes.size(); i++) {
             boolean editable = true;
             boolean shouldNeverBeEdited = false;
+
             if (programTrackedEntityAttributes.get(i).getTrackedEntityAttribute().isGenerated()) {
                 editable = false;
                 shouldNeverBeEdited = true;
             }
+
             if (ValueType.COORDINATE.equals(programTrackedEntityAttributes.get(
                     i).getTrackedEntityAttribute().getValueType())) {
                 GpsController.activateGps(context);
             }
-            Row row = DataEntryRowFactory.createDataEntryView(
-                    programTrackedEntityAttributes.get(i).getMandatory(),
-                    programTrackedEntityAttributes.get(i).getAllowFutureDate(),
-                    programTrackedEntityAttributes.get(
-                            i).getTrackedEntityAttribute().getOptionSet(),
-                    programTrackedEntityAttributes.get(i).getTrackedEntityAttribute().getName(),
-                    getTrackedEntityDataValue(programTrackedEntityAttributes.get(i).
-                            getTrackedEntityAttribute().getUid(), trackedEntityAttributeValues),
-                    programTrackedEntityAttributes.get(
-                            i).getTrackedEntityAttribute().getValueType(),
-                    editable, shouldNeverBeEdited, mProgram.getDataEntryMethod());
+
+            Row row = getRow(programTrackedEntityAttributes.get(i), editable,
+                    shouldNeverBeEdited, mProgram, trackedEntityAttributeValues);
+
             dataEntryRows.add(row);
         }
-        for (TrackedEntityAttributeValue trackedEntityAttributeValue :
-                trackedEntityAttributeValues) {
+
+        for (TrackedEntityAttributeValue trackedEntityAttributeValue : trackedEntityAttributeValues) {
             mForm.getTrackedEntityAttributeValueMap().put(
                     trackedEntityAttributeValue.getTrackedEntityAttributeId(),
                     trackedEntityAttributeValue);
         }
+
         mForm.setDataEntryRows(dataEntryRows);
         return mForm;
     }
 
-    public TrackedEntityAttributeValue getTrackedEntityDataValue(String trackedEntityAttribute,
-            List<TrackedEntityAttributeValue> trackedEntityAttributeValues) {
-        for (TrackedEntityAttributeValue trackedEntityAttributeValue :
-                trackedEntityAttributeValues) {
-            if (trackedEntityAttributeValue.getTrackedEntityAttributeId().equals(
-                    trackedEntityAttribute)) {
+    private TrackedEntityAttributeValue getTrackedEntityDataValue(String trackedEntityAttribute,
+                                    List<TrackedEntityAttributeValue> trackedEntityAttributeValues
+    ) {
+        for (TrackedEntityAttributeValue trackedEntityAttributeValue : trackedEntityAttributeValues) {
+            if (trackedEntityAttributeValue.getTrackedEntityAttributeId().equals(trackedEntityAttribute)) {
                 return trackedEntityAttributeValue;
             }
         }
@@ -177,5 +166,39 @@ class TrackedEntityInstanceDataEntryFragmentQuery implements Query<TrackedEntity
         trackedEntityAttributeValue.setValue("");
         trackedEntityAttributeValues.add(trackedEntityAttributeValue);
         return trackedEntityAttributeValue;
+    }
+
+    private Row getRow(ProgramTrackedEntityAttribute programTrackedEntityAttribute,
+                       boolean editable, boolean shouldNeverBeEdited, Program mProgram,
+                       List<TrackedEntityAttributeValue> trackedEntityAttributeValues) {
+        return DataEntryRowFactory.createDataEntryView(
+                programTrackedEntityAttribute.getMandatory(),
+                programTrackedEntityAttribute.getAllowFutureDate(),
+                programTrackedEntityAttribute.getTrackedEntityAttribute().getOptionSet(),
+                programTrackedEntityAttribute.getTrackedEntityAttribute().getName(),
+                getTrackedEntityDataValue(programTrackedEntityAttribute.
+                        getTrackedEntityAttribute().getUid(),
+                        trackedEntityAttributeValues),
+                programTrackedEntityAttribute.getTrackedEntityAttribute().getValueType(),
+                editable,
+                shouldNeverBeEdited,
+                mProgram.getDataEntryMethod());
+    }
+
+    private TrackedEntityInstance getCurrentTrackedEntityInstance(Program mProgram) {
+        if (hasTrackedEntity()) {
+            return TrackerController.getTrackedEntityInstance(mTrackedEntityInstanceId);
+        } else {
+            return new TrackedEntityInstance(mProgram, mOrgUnitId);
+        }
+    }
+
+    private TrackedEntityAttributeValue getTrackedEntityAttributeValue(ProgramTrackedEntityAttribute ptea) {
+        return TrackerController.getTrackedEntityAttributeValue(
+                ptea.getTrackedEntityAttributeId(), currentTrackedEntityInstance.getLocalId());
+    }
+
+    private boolean hasTrackedEntity(){
+        return mTrackedEntityInstanceId >= 0;
     }
 }

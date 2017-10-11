@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -114,16 +115,22 @@ public class HolderActivity extends AbsHomeActivity {
                 getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, trackedEntityInstanceProfileFragment).commit();
                 break;
             }
+            /* XX here the person is created!!!! */
             case ARG_TYPE_TRACKEDENTITYINSTANCEDATAENTRYFRAGMENT: {
                 TrackedEntityInstanceDataEntryFragment trackedEntityInstanceDataEntryFragment = new TrackedEntityInstanceDataEntryFragment();
+
                 onBackPressedListener = trackedEntityInstanceDataEntryFragment;
+
+                // sends arguments from Intent.
                 trackedEntityInstanceDataEntryFragment.setArguments(getIntent().getExtras());
+
                 getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, trackedEntityInstanceDataEntryFragment).commit();
                 break;
             }
             case ARG_TYPE_ENROLLMENTDATEFRAGMENT: {
                 EnrollmentDateFragment enrollmentDateFragment = new EnrollmentDateFragment();
                 onBackPressedListener = enrollmentDateFragment;
+
                 enrollmentDateFragment.setArguments(getIntent().getExtras());
                 getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, enrollmentDateFragment).commit();
                 break;
