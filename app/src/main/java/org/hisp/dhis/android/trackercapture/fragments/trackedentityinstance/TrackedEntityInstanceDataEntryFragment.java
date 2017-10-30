@@ -74,17 +74,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TrackedEntityInstanceDataEntryFragment extends
-        DataEntryFragment<TrackedEntityInstanceDataEntryFragmentForm>
+public class TrackedEntityInstanceDataEntryFragment
+        extends DataEntryFragment<TrackedEntityInstanceDataEntryFragmentForm>
         implements OnBackPressedListener {
 
     public static final String TAG = TrackedEntityInstanceDataEntryFragment.class.getSimpleName();
-    private static final String EMPTY_FIELD = "";
     public static final String ORG_UNIT_ID = "extra:orgUnitId";
     public static final String PROGRAM_ID = "extra:ProgramId";
     public static final String TRACKEDENTITYINSTANCE_ID = "extra:TrackedEntityInstanceId";
     public static final String PROGRAMRULES_FORCED_TRIGGER = "forced";
     public static final String EXTRA_NAVIGATION = "extra:Navigation";
+    private static final String EMPTY_FIELD = "";
 
     public static boolean backNavigation;
 
@@ -105,7 +105,9 @@ public class TrackedEntityInstanceDataEntryFragment extends
     }
 
     public static TrackedEntityInstanceDataEntryFragment newInstance(String unitId,
-            String programId, String enrollmentDate, String incidentDate) {
+                                                                     String programId,
+                                                                     String enrollmentDate,
+                                                                     String incidentDate) {
         TrackedEntityInstanceDataEntryFragment fragment = new TrackedEntityInstanceDataEntryFragment();
         Bundle args = new Bundle();
         args.putString(ORG_UNIT_ID, unitId);
@@ -115,8 +117,10 @@ public class TrackedEntityInstanceDataEntryFragment extends
     }
 
     public static TrackedEntityInstanceDataEntryFragment newInstance(String unitId,
-            String programId, long trackedEntityInstanceId, String enrollmentDate,
-            String incidentDate) {
+                                                                     String programId,
+                                                                     long trackedEntityInstanceId,
+                                                                     String enrollmentDate,
+                                                                     String incidentDate) {
         Log.w("myTag", "new Instance made");
         TrackedEntityInstanceDataEntryFragment fragment = new TrackedEntityInstanceDataEntryFragment();
         Bundle args = new Bundle();

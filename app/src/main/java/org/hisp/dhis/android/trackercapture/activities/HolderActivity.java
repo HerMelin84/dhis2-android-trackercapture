@@ -6,16 +6,17 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import org.hisp.dhis.android.sdk.persistence.models.ProgramStagesEventsTable;
 import org.hisp.dhis.android.sdk.persistence.models.TrackedEntityInstance;
 import org.hisp.dhis.android.sdk.ui.activities.OnBackPressedListener;
-import org.hisp.dhis.android.sdk.ui.fragments.eventdataentry.EventDataEntryFragment;
+
 import org.hisp.dhis.android.trackercapture.R;
-import org.hisp.dhis.android.trackercapture.fragments.trackedentityinstance
-        .TrackedEntityInstanceDataEntryFragment;
+import org.hisp.dhis.android.trackercapture.fragments.eventdataentry.EventDataEntryStagesHistoryFragment;
+import org.hisp.dhis.android.trackercapture.fragments.eventdataentry.EventDataEntryFragment;
+import org.hisp.dhis.android.trackercapture.fragments.trackedentityinstance.TrackedEntityInstanceDataEntryFragment;
 import org.hisp.dhis.android.trackercapture.fragments.enrollment.EnrollmentDataEntryFragment;
 import org.hisp.dhis.android.trackercapture.fragments.enrollmentdate.EnrollmentDateFragment;
 import org.hisp.dhis.android.trackercapture.fragments.programoverview.ProgramOverviewFragment;
@@ -35,12 +36,12 @@ import java.util.HashMap;
 import java.util.List;
 
 public class HolderActivity extends AbsHomeActivity {
-
     public static final String ARG_TYPE = "arg:FragmentType";
     public static final String ARG_TYPE_ENROLLMENTFRAGMENT = "arg:EnrollmentTypeFragment";
     public static final String ARG_TYPE_PROGRAMOVERVIEWFRAGMENT = "arg:ProgramOverviewFragment";
     public static final String ARG_TYPE_SETTINGSFRAGMENT = "arg:SettingsFragment";
     public static final String ARG_TYPE_DATAENTRYFRAGMENT = "arg:DataEntryFragment";
+    public static final String ARG_TYPE_DATAENTRYSTAGEHISTORYFRAGMENT = "arg:DataEntryStageHistoryFragment";
     public static final String ARG_TYPE_TRACKEDENTITYINSTANCEPROFILE = "arg:TrackedEntityInstanceProfile";
     public static final String ARG_TYPE_ENROLLMENTDATEFRAGMENT = "arg:EnrollmentDateFragment";
     public static final String ARG_TYPE_LOCALSEARCHFRAGMENT = "arg:LocalSearchFragment";
@@ -49,6 +50,7 @@ public class HolderActivity extends AbsHomeActivity {
     public static final String ARG_TYPE_ONLINESEARCHFRAGMENT = "arg:OnlineSearchFragment";
     public static final String ARG_TYPE_ONLINESEARCHRESULTFRAGMENT = "arg:OnlineSearchResultFragment";
     private static final String ARG_TYPE_UPCOMINGEVENTSFRAGMENT = "arg:UpcomingEventsFragment";
+
     OnBackPressedListener onBackPressedListener;
     public static OnlineSearchResultFragment.CallBack mCallBack;
 
@@ -67,64 +69,111 @@ public class HolderActivity extends AbsHomeActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_holder);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         addMenuItem(11, R.drawable.ic_add, R.string.enroll);
+
         if (savedInstanceState == null) {
-            onNavigationItemSelected(getNavigationView().getMenu()
-                    .findItem(11));
+            onNavigationItemSelected(getNavigationView().getMenu().findItem(11));
         }
 
-        String arg = getIntent().getExtras().getString(ARG_TYPE);
-        System.out.println(arg);
         String argType = getIntent().getExtras().getString(ARG_TYPE);
+        System.out.println(argType);
+        assert argType != null;
+
         switch (argType) {
             case ARG_TYPE_ENROLLMENTFRAGMENT: {
                 EnrollmentDataEntryFragment fragment = new EnrollmentDataEntryFragment();
                 onBackPressedListener = fragment;
-                fragment.setArguments(getIntent().getExtras());
-                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).commit();
+                fragment
+                        .setArguments(getIntent().getExtras());
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.content_frame, fragment)
+                        .commit();
                 break;
             }
             case ARG_TYPE_PROGRAMOVERVIEWFRAGMENT: {
                 ProgramOverviewFragment fragment = new ProgramOverviewFragment();
                 onBackPressedListener = fragment;
                 fragment.setArguments(getIntent().getExtras());
-                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).commit();
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.content_frame, fragment)
+                        .commit();
                 break;
             }
             case ARG_TYPE_SETTINGSFRAGMENT: {
                 onBackPressedListener = null;
                 SettingsFragment settingsFragment = new SettingsFragment();
-                settingsFragment.setArguments(getIntent().getExtras());
-                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, settingsFragment).commit();
+                settingsFragment
+                        .setArguments(getIntent().getExtras());
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.content_frame, settingsFragment)
+                        .commit();
                 break;
             }
             case ARG_TYPE_DATAENTRYFRAGMENT: {
                 EventDataEntryFragment eventDataEntryFragment = new EventDataEntryFragment();
                 onBackPressedListener = eventDataEntryFragment;
-                eventDataEntryFragment.setArguments(getIntent().getExtras());
-                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, eventDataEntryFragment).commit();
+                eventDataEntryFragment
+                        .setArguments(getIntent().getExtras());
+
+                if (getIntent().hasExtra(EventDataEntryFragment.PROGRAM_EVENTS_HISTORY)) {
+                    setProgramStagesEventsTable(eventDataEntryFragment);
+                }
+
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.content_frame, eventDataEntryFragment)
+                        .commit();
+                break;
+            }
+            case ARG_TYPE_DATAENTRYSTAGEHISTORYFRAGMENT: {
+                EventDataEntryStagesHistoryFragment eventHistoryFragment = new EventDataEntryStagesHistoryFragment();
+                onBackPressedListener = eventHistoryFragment;
+                eventHistoryFragment
+                        .setArguments(getIntent().getExtras());
+
+                if (getIntent().hasExtra(EventDataEntryStagesHistoryFragment.PROGRAM_EVENTS_HISTORY)) {
+                    ProgramStagesEventsTable programStagesEventsTable =
+                            (ProgramStagesEventsTable) getIntent()
+                                    .getSerializableExtra(
+                                            EventDataEntryStagesHistoryFragment.PROGRAM_EVENTS_HISTORY);
+                    eventHistoryFragment.setProgramStagesEventsTable(programStagesEventsTable);
+                }
+
+                toolbar.setTitle("Svær pung bro!");
+
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.content_frame, eventHistoryFragment)
+                        .commit();
                 break;
             }
             case ARG_TYPE_TRACKEDENTITYINSTANCEPROFILE: {
                 TrackedEntityInstanceProfileFragment trackedEntityInstanceProfileFragment = new TrackedEntityInstanceProfileFragment();
                 onBackPressedListener = trackedEntityInstanceProfileFragment;
-                trackedEntityInstanceProfileFragment.setArguments(getIntent().getExtras());
-                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, trackedEntityInstanceProfileFragment).commit();
+                trackedEntityInstanceProfileFragment
+                        .setArguments(getIntent().getExtras());
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.content_frame, trackedEntityInstanceProfileFragment)
+                        .commit();
                 break;
             }
-            /* XX here the person is created!!!! */
             case ARG_TYPE_TRACKEDENTITYINSTANCEDATAENTRYFRAGMENT: {
                 TrackedEntityInstanceDataEntryFragment trackedEntityInstanceDataEntryFragment = new TrackedEntityInstanceDataEntryFragment();
-
                 onBackPressedListener = trackedEntityInstanceDataEntryFragment;
-
-                // sends arguments from Intent.
-                trackedEntityInstanceDataEntryFragment.setArguments(getIntent().getExtras());
-
-                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, trackedEntityInstanceDataEntryFragment).commit();
+                trackedEntityInstanceDataEntryFragment
+                        .setArguments(getIntent().getExtras());
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.content_frame, trackedEntityInstanceDataEntryFragment)
+                        .commit();
                 break;
             }
             case ARG_TYPE_ENROLLMENTDATEFRAGMENT: {
@@ -132,46 +181,68 @@ public class HolderActivity extends AbsHomeActivity {
                 onBackPressedListener = enrollmentDateFragment;
 
                 enrollmentDateFragment.setArguments(getIntent().getExtras());
-                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, enrollmentDateFragment).commit();
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.content_frame, enrollmentDateFragment)
+                        .commit();
                 break;
             }
             case ARG_TYPE_ONLINESEARCHFRAGMENT: {
                 onBackPressedListener = null;
                 OnlineSearchFragment onlineSearchFragment = new OnlineSearchFragment();
-                onlineSearchFragment.setArguments(getIntent().getExtras());
-                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, onlineSearchFragment).commit();
+                onlineSearchFragment
+                        .setArguments(getIntent().getExtras());
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.content_frame, onlineSearchFragment)
+                        .commit();
                 break;
             }
             case ARG_TYPE_ONLINESEARCHRESULTFRAGMENT: {
                 onBackPressedListener = null;
                 OnlineSearchResultFragment onlineSearchResultFragment = new OnlineSearchResultFragment();
-                onlineSearchResultFragment.setArguments(getIntent().getExtras());
-                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, onlineSearchResultFragment).commit();
+                onlineSearchResultFragment
+                        .setArguments(getIntent().getExtras());
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.content_frame, onlineSearchResultFragment)
+                        .commit();
                 break;
             }
             case ARG_TYPE_LOCALSEARCHFRAGMENT: {
                 onBackPressedListener = null;
                 LocalSearchFragment localSearchFragment = new LocalSearchFragment();
-                localSearchFragment.setArguments(getIntent().getExtras());
-                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, localSearchFragment).commit();
+                localSearchFragment
+                        .setArguments(getIntent().getExtras());
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.content_frame, localSearchFragment)
+                        .commit();
                 break;
             }
             case ARG_TYPE_LOCALSEARCHRESULTFRAGMENT: {
                 onBackPressedListener = null;
                 LocalSearchResultFragment localSearchResultFragment = new LocalSearchResultFragment();
-                localSearchResultFragment.setArguments(getIntent().getExtras());
-                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, localSearchResultFragment).commit();
+                localSearchResultFragment
+                        .setArguments(getIntent().getExtras());
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.content_frame, localSearchResultFragment)
+                        .commit();
                 break;
             }
             case ARG_TYPE_UPCOMINGEVENTSFRAGMENT: {
                 onBackPressedListener = null;
                 UpcomingEventsFragment upcomingEventsFragment = new UpcomingEventsFragment();
-                upcomingEventsFragment.setArguments(getIntent().getExtras());
-                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, upcomingEventsFragment).commit();
+                upcomingEventsFragment
+                        .setArguments(getIntent().getExtras());
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.content_frame, upcomingEventsFragment)
+                        .commit();
                 break;
             }
         }
-
     }
 
     @NonNull
@@ -196,7 +267,6 @@ public class HolderActivity extends AbsHomeActivity {
         return false;
     }
 
-
     public static void navigateToEnrollmentDataEntryFragment(Activity activity, String orgUnitId,
                                                              String programId,
                                                              long trackedEntityInstanceId,
@@ -209,10 +279,7 @@ public class HolderActivity extends AbsHomeActivity {
         intent.putExtra(EnrollmentDataEntryFragment.ENROLLMENT_DATE, dateOfEnrollment);
         intent.putExtra(EnrollmentDataEntryFragment.INCIDENT_DATE, dateOfIncident);
         intent.putExtra(ARG_TYPE, ARG_TYPE_ENROLLMENTFRAGMENT);
-
-//        intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY); // we don't want to keep it to backstack
         activity.startActivity(intent);
-
     }
 
     public static void navigateToEnrollmentDataEntryFragment(Activity activity, String orgUnitId,
@@ -225,8 +292,6 @@ public class HolderActivity extends AbsHomeActivity {
         intent.putExtra(EnrollmentDataEntryFragment.ENROLLMENT_DATE, dateOfEnrollment);
         intent.putExtra(EnrollmentDataEntryFragment.INCIDENT_DATE, dateOfIncident);
         intent.putExtra(ARG_TYPE, ARG_TYPE_ENROLLMENTFRAGMENT);
-
-//        intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY); // we don't want to keep it to backstack
         activity.startActivity(intent);
 
     }
@@ -235,54 +300,72 @@ public class HolderActivity extends AbsHomeActivity {
                                                          String orgUnitId,
                                                          String programId,
                                                          long trackedEntityInstanceId) {
-
         Intent intent = new Intent(activity, HolderActivity.class);
         intent.putExtra(EnrollmentDataEntryFragment.ORG_UNIT_ID, orgUnitId);
         intent.putExtra(EnrollmentDataEntryFragment.PROGRAM_ID, programId);
         intent.putExtra(EnrollmentDataEntryFragment.TRACKEDENTITYINSTANCE_ID, trackedEntityInstanceId);
         intent.putExtra(ARG_TYPE, ARG_TYPE_PROGRAMOVERVIEWFRAGMENT);
-
         activity.startActivity(intent);
+    }
 
+    public static void navigateToDataEntryFragment(Activity activity,
+                                                   String orgUnitId,
+                                                   String programId,
+                                                   String programStageId,
+                                                   long localEnrollmentId) {
+        Intent intent = new Intent(activity, HolderActivity.class);
+        intent.putExtra(EventDataEntryFragment.ORG_UNIT_ID, orgUnitId);
+        intent.putExtra(EventDataEntryFragment.PROGRAM_ID, programId);
+        intent.putExtra(EventDataEntryFragment.PROGRAM_STAGE_ID, programStageId);
+        intent.putExtra(EventDataEntryFragment.ENROLLMENT_ID, localEnrollmentId);
+        intent.putExtra(ARG_TYPE, ARG_TYPE_DATAENTRYFRAGMENT);
+        activity.startActivity(intent);
     }
 
 
-    public static void navigateToDataEntryFragment(Activity activity, String orgUnitId,
-                                                   String programId, String programStageId,
-                                                   long localEnrollmentId, long eventId) {
+    public static void navigateToDataEntryFragment(Activity activity,
+                                                   String orgUnitId,
+                                                   String programId,
+                                                   String programStageId,
+                                                   long localEnrollmentId,
+                                                   long eventId,
+                                                   ProgramStagesEventsTable programStagesEventsTable) {
         Intent intent = new Intent(activity, HolderActivity.class);
         intent.putExtra(EventDataEntryFragment.ORG_UNIT_ID, orgUnitId);
         intent.putExtra(EventDataEntryFragment.PROGRAM_ID, programId);
         intent.putExtra(EventDataEntryFragment.PROGRAM_STAGE_ID, programStageId);
         intent.putExtra(EventDataEntryFragment.ENROLLMENT_ID, localEnrollmentId);
         intent.putExtra(EventDataEntryFragment.EVENT_ID, eventId);
+        intent.putExtra(EventDataEntryFragment.PROGRAM_EVENTS_HISTORY, programStagesEventsTable);
         intent.putExtra(ARG_TYPE, ARG_TYPE_DATAENTRYFRAGMENT);
         activity.startActivity(intent);
     }
 
-    public static void navigateToEnrollmentDateFragment(Activity activity, long enrollmentId) {
+    public static void navigateToDataEntryEventStagesHistoryFragment(Activity activity,
+                                                                     ProgramStagesEventsTable programStagesEventsTable) {
+        Intent intent = new Intent(activity, HolderActivity.class);
+        intent.putExtra(EventDataEntryFragment.PROGRAM_EVENTS_HISTORY, programStagesEventsTable);
+        intent.putExtra(ARG_TYPE, ARG_TYPE_DATAENTRYSTAGEHISTORYFRAGMENT);
+        activity.startActivity(intent);
+    }
+
+    public static void navigateToEnrollmentDateFragment(Activity activity,
+                                                        long enrollmentId) {
         Intent intent = new Intent(activity, HolderActivity.class);
         intent.putExtra(EnrollmentDateFragment.ENROLLMENT_ID, enrollmentId);
         intent.putExtra(ARG_TYPE, ARG_TYPE_ENROLLMENTDATEFRAGMENT);
         activity.startActivity(intent);
     }
 
-    public static void navigateToTrackedEntityInstanceProfileFragment(Activity activity, long trackedEntityInstanceId, String programId, long enrollmentId) {
+    public static void navigateToTrackedEntityInstanceProfileFragment(Activity activity,
+                                                                      long trackedEntityInstanceId,
+                                                                      String programId,
+                                                                      long enrollmentId) {
         Intent intent = new Intent(activity, HolderActivity.class);
         intent.putExtra(TrackedEntityInstanceProfileFragment.TRACKEDENTITYINSTANCE_ID, trackedEntityInstanceId);
         intent.putExtra(TrackedEntityInstanceProfileFragment.PROGRAM_ID, programId);
         intent.putExtra(ARG_TYPE, ARG_TYPE_TRACKEDENTITYINSTANCEPROFILE);
         intent.putExtra(TrackedEntityInstanceProfileFragment.ENROLLMENT_ID, enrollmentId);
-        activity.startActivity(intent);
-    }
-
-    public static void navigateToDataEntryFragment(Activity activity, String orgUnitId, String programId, String programStageId, long localEnrollmentId) {
-        Intent intent = new Intent(activity, HolderActivity.class);
-        intent.putExtra(EventDataEntryFragment.ORG_UNIT_ID, orgUnitId);
-        intent.putExtra(EventDataEntryFragment.PROGRAM_ID, programId);
-        intent.putExtra(EventDataEntryFragment.PROGRAM_STAGE_ID, programStageId);
-        intent.putExtra(EventDataEntryFragment.ENROLLMENT_ID, localEnrollmentId);
-        intent.putExtra(ARG_TYPE, ARG_TYPE_DATAENTRYFRAGMENT);
         activity.startActivity(intent);
     }
 
@@ -292,8 +375,10 @@ public class HolderActivity extends AbsHomeActivity {
         activity.startActivity(intent);
     }
 
-    public static void navigateToOnlineSearchFragment(Activity activity, String programId,
-            String orgUnitId, boolean backNavigation,
+    public static void navigateToOnlineSearchFragment(Activity activity,
+                                                      String programId,
+                                                      String orgUnitId,
+                                                      boolean backNavigation,
             OnlineSearchResultFragment.CallBack callBack) {
         mCallBack = callBack;
         Intent intent = new Intent(activity, HolderActivity.class);
@@ -305,7 +390,11 @@ public class HolderActivity extends AbsHomeActivity {
         activity.startActivity(intent);
     }
 
-    public static void navigateToOnlineSearchResultFragment(Activity activity, List<TrackedEntityInstance> trackedEntityInstances, String orgUnit, String program, boolean backNavigation) {
+    public static void navigateToOnlineSearchResultFragment(Activity activity,
+                                                            List<TrackedEntityInstance> trackedEntityInstances,
+                                                            String orgUnit,
+                                                            String program,
+                                                            boolean backNavigation) {
         try {
             Intent intent = new Intent(activity, HolderActivity.class);
 
@@ -313,7 +402,6 @@ public class HolderActivity extends AbsHomeActivity {
                     new OnlineSearchResultFragment.ParameterSerializible(trackedEntityInstances);
             OnlineSearchResultFragment.ParameterSerializible parameterSerializible2 =
                     new OnlineSearchResultFragment.ParameterSerializible(new ArrayList<TrackedEntityInstance>());
-
 
             intent.putExtra(OnlineSearchResultFragment.EXTRA_ORGUNIT, orgUnit);
             intent.putExtra(OnlineSearchResultFragment.EXTRA_SELECTALL, false);
@@ -330,10 +418,11 @@ public class HolderActivity extends AbsHomeActivity {
                 Toast.makeText(activity, R.string.generic_error, Toast.LENGTH_LONG).show();
             }
         }
-
     }
 
-    public static void navigateToLocalSearchFragment(Activity activity, String orgUnitId, String programId) {
+    public static void navigateToLocalSearchFragment(Activity activity,
+                                                     String orgUnitId,
+                                                     String programId) {
         Intent intent = new Intent(activity, HolderActivity.class);
         intent.putExtra(LocalSearchFragment.EXTRA_PROGRAM, programId);
         intent.putExtra(LocalSearchFragment.EXTRA_ORGUNIT, orgUnitId);
@@ -341,7 +430,10 @@ public class HolderActivity extends AbsHomeActivity {
         activity.startActivity(intent);
     }
 
-    public static void navigateToLocalSearchResultFragment(Activity activity, String organisationUnitId, String program, HashMap<String, String> attributeValues) {
+    public static void navigateToLocalSearchResultFragment(Activity activity,
+                                                           String organisationUnitId,
+                                                           String program,
+                                                           HashMap<String, String> attributeValues) {
         Intent intent = new Intent(activity, HolderActivity.class);
         intent.putExtra(LocalSearchResultFragment.EXTRA_ORGUNIT, organisationUnitId);
         intent.putExtra(LocalSearchResultFragment.EXTRA_PROGRAM, program);
@@ -357,7 +449,10 @@ public class HolderActivity extends AbsHomeActivity {
     }
 
     public static void navigateToTrackedEntityInstanceDataEntryFragment(Activity activity,
-            String programId, String orgUnit, boolean navigationBack, OnlineSearchResultFragment.CallBack callBack) {
+                                                                        String programId,
+                                                                        String orgUnit,
+                                                                        boolean navigationBack,
+                                                                        OnlineSearchResultFragment.CallBack callBack) {
         mCallBack = callBack;
         Intent intent = new Intent(activity, HolderActivity.class);
         intent.putExtra(TrackedEntityInstanceDataEntryFragment.PROGRAM_ID, programId);
@@ -367,4 +462,11 @@ public class HolderActivity extends AbsHomeActivity {
         activity.startActivity(intent);
     }
 
+    public void setProgramStagesEventsTable(EventDataEntryFragment eventDataEntryFragment) {
+        ProgramStagesEventsTable programStagesEventsTable =
+                (ProgramStagesEventsTable) getIntent()
+                        .getSerializableExtra(EventDataEntryFragment.PROGRAM_EVENTS_HISTORY);
+        eventDataEntryFragment
+                .setProgramStagesEventsTable(programStagesEventsTable);
+    }
 }

@@ -80,9 +80,11 @@ public class SelectProgramDialogFragment extends DialogFragment
     private static final String EXTRA_ARGUMENTS = "extra:Arguments";
     private static final String EXTRA_SAVED_INSTANCE_STATE = "extra:savedInstanceState";
     private static final String EXTRA_SAVED_ACTION = "extra:savedAction";
+
     public static SelectProgramDialogFragment newInstance(long trackedEntityInstanceId,
-            Action action, OnlineSearchResultFragment.CallBack callBack) {
-        mCallBack=callBack;
+                                                          Action action,
+                                                          OnlineSearchResultFragment.CallBack callBack) {
+        mCallBack = callBack;
         SelectProgramDialogFragment dialogFragment = new SelectProgramDialogFragment();
         Bundle args = new Bundle();
 
@@ -101,10 +103,16 @@ public class SelectProgramDialogFragment extends DialogFragment
 
     @Override
     public View onCreateView(LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+                             ViewGroup container,
+                             Bundle savedInstanceState) {
+        getDialog()
+                .getWindow()
+                .setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
-        return inflater.inflate(org.hisp.dhis.android.trackercapture.R.layout.dialog_fragment_selection_program, container, false);
+        return inflater.inflate(
+                org.hisp.dhis.android.trackercapture.R.layout.dialog_fragment_selection_program,
+                container,
+                false);
     }
 
     @Override
@@ -127,11 +135,9 @@ public class SelectProgramDialogFragment extends DialogFragment
             createNewTeiButton.setVisibility(View.VISIBLE);
         }
 
-        ImageView closeDialogButton = (ImageView) view
-                .findViewById(R.id.close_dialog_button);
+        ImageView closeDialogButton = (ImageView) view.findViewById(R.id.close_dialog_button);
         closeDialogButton.setOnClickListener(this);
-        mDialogLabel = (TextView) view
-                .findViewById(R.id.dialog_label);
+        mDialogLabel = (TextView) view.findViewById(R.id.dialog_label);
         setDialogLabel(org.hisp.dhis.android.trackercapture.R.string.download_entities_title);
 
         setOUAndProgramButtons(view);
@@ -141,8 +147,7 @@ public class SelectProgramDialogFragment extends DialogFragment
 
     private void setState(Bundle savedInstanceState) {
 
-        if (savedInstanceState != null &&
-                savedInstanceState.getParcelable(STATE) != null) {
+        if (savedInstanceState != null && savedInstanceState.getParcelable(STATE) != null) {
             mState = savedInstanceState.getParcelable(STATE);
         }
 
@@ -159,15 +164,11 @@ public class SelectProgramDialogFragment extends DialogFragment
                 }
                 if(filter != null) {
                     mState.setFilter(filter.first, filter.second);
-                }
-                else {
+                } else {
                     mState.setFilter("0", Arrays.asList(UpcomingEventsDialogFilter.Type.values()).get(0).toString());
                 }
-
-
             }
         }
-
         onRestoreState(true);
     }
 
@@ -268,7 +269,6 @@ public class SelectProgramDialogFragment extends DialogFragment
                 );
             }
         }
-
     }
 
     public void onUnitSelected(String orgUnitId, String orgUnitLabel) {
@@ -287,7 +287,6 @@ public class SelectProgramDialogFragment extends DialogFragment
 
         mState.setProgram(programId, programName);
         mPrefs.putProgram(new Pair<>(programId, programName));
-
         // this call will trigger onCreateLoader method
     }
 

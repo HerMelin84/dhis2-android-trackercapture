@@ -27,24 +27,39 @@
  *
  */
 
-package org.hisp.dhis.android.trackercapture;
-
-import android.app.Activity;
+package org.hisp.dhis.android.trackercapture.fragments.eventdataentry;
 
 import org.hisp.dhis.android.sdk.persistence.Dhis2Application;
+import org.hisp.dhis.android.sdk.ui.fragments.dataentry.AsyncHelperThread;
+import org.hisp.dhis.android.sdk.ui.fragments.dataentry.DataEntryFragment;
+import org.hisp.dhis.android.sdk.ui.fragments.dataentry.RefreshListViewEvent;
 
 /**
- * @author Simen Skogly Russnes on 02.03.15.
+ * Thread that handles asynchronous updating of results based on ProgramRules and Indicators.
+ * This thread enables thread safe scheduling of ProgramRule and Indicator evaluation and updating,
+ * typically triggered by data changed in data entry rows.
  */
-public class TrackerCaptureApplication extends Dhis2Application {
+public class RulesEvaluatorThread extends AsyncHelperThread {
+    private DataEntryFragment dataEntryFragment;
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
+    public void init(DataEntryFragment dataEntryFragment) {
+        setDataEntryFragment(dataEntryFragment);
     }
 
-    @Override
-    public Class<? extends Activity> getMainActivity() {
-        return new MainActivity().getClass();
+    public void setDataEntryFragment(DataEntryFragment dataEntryFragment) {
+        this.dataEntryFragment = dataEntryFragment;
+    }
+
+    protected void work() {
+        if (dataEntryFragment != null) {
+            dataEntryFragment.resetHidingAndWarnings(dataEntryFragment.getListViewAdapter(), dataEntryFragment.getSpinnerAdapter());
+            dataEntryFragment.evaluateAndApplyProgramRules();
+            Dhis2Application.getEventBus().post(new RefreshListViewEvent());
+        }
+    }
+
+    public void kill() {
+        super.kill();
+        setDataEntryFragment(null);
     }
 }

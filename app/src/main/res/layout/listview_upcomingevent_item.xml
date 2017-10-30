@@ -39,13 +39,13 @@
         android:id="@+id/first_event_item"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:lines="2"
         android:layout_weight="0.25"
-        android:textSize="13sp"
-        android:gravity="center"
         android:ellipsize="end"
+        android:gravity="center"
+        android:lines="2"
         android:minHeight="48dp"
         android:padding="2dp"
+        android:textSize="13sp"
         app:font="@string/light_font_name" />
 
     <View
@@ -57,13 +57,13 @@
         android:id="@+id/second_event_item"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:lines="2"
         android:layout_weight="0.25"
-        android:gravity="center"
-        android:textSize="13sp"
         android:ellipsize="end"
+        android:gravity="center"
+        android:lines="2"
         android:minHeight="48dp"
         android:padding="2dp"
+        android:textSize="13sp"
         app:font="@string/light_font_name" />
 
     <View
@@ -75,13 +75,13 @@
         android:id="@+id/duedate"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:lines="2"
         android:layout_weight="0.25"
-        android:textSize="13sp"
-        android:gravity="center"
         android:ellipsize="end"
+        android:gravity="center"
+        android:lines="2"
         android:minHeight="48dp"
         android:padding="2dp"
+        android:textSize="13sp"
         app:font="@string/light_font_name" />
 
     <View

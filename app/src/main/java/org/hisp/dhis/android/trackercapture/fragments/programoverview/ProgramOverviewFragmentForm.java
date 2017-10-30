@@ -31,6 +31,7 @@ package org.hisp.dhis.android.trackercapture.fragments.programoverview;
 
 import org.hisp.dhis.android.sdk.persistence.models.Enrollment;
 import org.hisp.dhis.android.sdk.persistence.models.Program;
+import org.hisp.dhis.android.sdk.persistence.models.ProgramStagesEventsTable;
 import org.hisp.dhis.android.sdk.persistence.models.ProgramIndicator;
 import org.hisp.dhis.android.sdk.persistence.models.TrackedEntityInstance;
 import org.hisp.dhis.android.sdk.ui.adapters.rows.dataentry.IndicatorRow;
@@ -56,6 +57,8 @@ class ProgramOverviewFragmentForm {
     private List<ProgramStageRow> programStageRows;
 
     private Map<ProgramIndicator, IndicatorRow> programIndicatorRows;
+
+    private ProgramStagesEventsTable programStagesEventsTable;
 
     public Enrollment getEnrollment() {
         return enrollment;
@@ -159,5 +162,13 @@ class ProgramOverviewFragmentForm {
 
     public void setProgramIndicatorRows(Map<ProgramIndicator, IndicatorRow> programIndicatorRows) {
         this.programIndicatorRows = programIndicatorRows;
+    }
+
+    public ProgramStagesEventsTable getProgramStagesEventsTable() {
+        return programStagesEventsTable;
+    }
+
+    public void setProgramStagesEventsTable(ProgramStagesEventsTable programStagesEventsTable) {
+        this.programStagesEventsTable = programStagesEventsTable;
     }
 }

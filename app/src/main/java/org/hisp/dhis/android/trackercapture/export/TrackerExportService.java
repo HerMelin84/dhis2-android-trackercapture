@@ -18,9 +18,19 @@ public class TrackerExportService extends ExportService<TrackerExportResponse> {
     @Override
     public TrackerExportResponse getResponseObject() {
         FlowManager.init(this);
-        List<TrackedEntityInstance> trackedEntityInstances = new Select().from(TrackedEntityInstance.class).queryList();
-        List<Enrollment> enrollments = new Select().from(Enrollment.class).queryList();
-        List<Event> events = new Select().from(Event.class).queryList();
+
+        List<TrackedEntityInstance> trackedEntityInstances = new Select()
+                .from(TrackedEntityInstance.class)
+                .queryList();
+
+        List<Enrollment> enrollments = new Select()
+                .from(Enrollment.class)
+                .queryList();
+
+        List<Event> events = new Select()
+                .from(Event.class)
+                .queryList();
+
         FlowManager.destroy();
         return TrackerExportResponse.build(trackedEntityInstances, enrollments, events);
     }

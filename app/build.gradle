@@ -42,10 +42,16 @@ android {
 //        versionCode 22
 //        versionName "0.3.4-2.22"
 //    }
-
+    signingConfigs {
+        release {
+            keyAlias 'key0'
+            keyPassword 'pokkom'
+            storeFile file('/Users/jemelin/master.jks')
+            storePassword 'pokkom'
+        }
+    }
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
-
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
@@ -54,22 +60,21 @@ android {
         applicationId rootProject.ext.configuration.applicationId
         multiDexEnabled true
     }
-
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
         debug {
             testCoverageEnabled true
         }
     }
-
     lintOptions {
         disable 'RtlSymmetry', 'RtlHardcoded'
+        disable 'MissingTranslation'
         abortOnError false
     }
-
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES.txt'
         exclude 'META-INF/LICENSE.txt'
@@ -88,11 +93,9 @@ android {
 dependencies {
     compile project(':core')
     compile project(':ui')
-
-
     compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
         transitive = true;
     }
-
     compile 'com.android.support:multidex:1.0.1'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
 }

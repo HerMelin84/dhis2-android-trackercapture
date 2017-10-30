@@ -64,9 +64,11 @@ class EnrollmentDataEntryFragmentQuery implements Query<EnrollmentDataEntryFragm
     private TrackedEntityInstance currentTrackedEntityInstance;
     private Enrollment currentEnrollment;
 
-    EnrollmentDataEntryFragmentQuery(String mOrgUnitId, String mProgramId,
-            long mTrackedEntityInstanceId,
-            String enrollmentDate, String incidentDate) {
+    EnrollmentDataEntryFragmentQuery(String mOrgUnitId,
+                                     String mProgramId,
+                                     long mTrackedEntityInstanceId,
+                                     String enrollmentDate,
+                                     String incidentDate) {
         this.mOrgUnitId = mOrgUnitId;
         this.mProgramId = mProgramId;
         this.mTrackedEntityInstanceId = mTrackedEntityInstanceId;

@@ -59,8 +59,9 @@ class TrackedEntityInstanceDataEntryFragmentQuery implements Query<TrackedEntity
     private final long mTrackedEntityInstanceId;
     private TrackedEntityInstance currentTrackedEntityInstance;
 
-    TrackedEntityInstanceDataEntryFragmentQuery(String mOrgUnitId, String mProgramId,
-            long mTrackedEntityInstanceId) {
+    TrackedEntityInstanceDataEntryFragmentQuery(String mOrgUnitId,
+                                                String mProgramId,
+                                                long mTrackedEntityInstanceId) {
         this.mOrgUnitId = mOrgUnitId;
         this.mProgramId = mProgramId;
         this.mTrackedEntityInstanceId = mTrackedEntityInstanceId;

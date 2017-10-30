@@ -94,17 +94,12 @@ import org.hisp.dhis.android.sdk.synchronization.data.event.EventLocalDataSource
 import org.hisp.dhis.android.sdk.synchronization.data.event.EventRemoteDataSource;
 import org.hisp.dhis.android.sdk.synchronization.data.event.EventRepository;
 import org.hisp.dhis.android.sdk.synchronization.data.faileditem.FailedItemRepository;
-import org.hisp.dhis.android.sdk.synchronization.data.trackedentityinstance
-        .TrackedEntityInstanceLocalDataSource;
-import org.hisp.dhis.android.sdk.synchronization.data.trackedentityinstance
-        .TrackedEntityInstanceRemoteDataSource;
-import org.hisp.dhis.android.sdk.synchronization.data.trackedentityinstance
-        .TrackedEntityInstanceRepository;
+import org.hisp.dhis.android.sdk.synchronization.data.trackedentityinstance.TrackedEntityInstanceLocalDataSource;
+import org.hisp.dhis.android.sdk.synchronization.data.trackedentityinstance.TrackedEntityInstanceRemoteDataSource;
+import org.hisp.dhis.android.sdk.synchronization.data.trackedentityinstance.TrackedEntityInstanceRepository;
 import org.hisp.dhis.android.sdk.synchronization.domain.enrollment.IEnrollmentRepository;
-import org.hisp.dhis.android.sdk.synchronization.domain.trackedentityinstance
-        .ITrackedEntityInstanceRepository;
-import org.hisp.dhis.android.sdk.synchronization.domain.trackedentityinstance
-        .SyncTrackedEntityInstanceUseCase;
+import org.hisp.dhis.android.sdk.synchronization.domain.trackedentityinstance.ITrackedEntityInstanceRepository;
+import org.hisp.dhis.android.sdk.synchronization.domain.trackedentityinstance.SyncTrackedEntityInstanceUseCase;
 import org.hisp.dhis.android.sdk.ui.activities.OnBackPressedListener;
 import org.hisp.dhis.android.sdk.ui.adapters.rows.dataentry.IndicatorRow;
 import org.hisp.dhis.android.sdk.ui.adapters.rows.dataentry.PlainTextRow;
@@ -119,12 +114,10 @@ import org.hisp.dhis.android.sdk.utils.comparators.EnrollmentDateComparator;
 import org.hisp.dhis.android.sdk.utils.services.ProgramRuleService;
 import org.hisp.dhis.android.trackercapture.R;
 import org.hisp.dhis.android.trackercapture.activities.HolderActivity;
-import org.hisp.dhis.android.trackercapture.fragments.programoverview
-        .registerrelationshipdialogfragment.RegisterRelationshipDialogFragment;
+import org.hisp.dhis.android.trackercapture.fragments.programoverview.registerrelationshipdialogfragment.RegisterRelationshipDialogFragment;
 import org.hisp.dhis.android.trackercapture.fragments.selectprogram.EnrollmentDateSetterHelper;
 import org.hisp.dhis.android.trackercapture.fragments.selectprogram.IEnroller;
-import org.hisp.dhis.android.trackercapture.fragments.selectprogram.dialogs
-        .ItemStatusDialogFragment;
+import org.hisp.dhis.android.trackercapture.fragments.selectprogram.dialogs.ItemStatusDialogFragment;
 import org.hisp.dhis.android.trackercapture.ui.adapters.ProgramAdapter;
 import org.hisp.dhis.android.trackercapture.ui.adapters.ProgramStageAdapter;
 import org.hisp.dhis.android.trackercapture.ui.rows.programoverview.OnProgramStageEventClick;
@@ -140,11 +133,14 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-public class ProgramOverviewFragment extends AbsProgramRuleFragment implements View.OnClickListener,
+public class ProgramOverviewFragment extends AbsProgramRuleFragment implements
+        View.OnClickListener,
         AdapterView.OnItemClickListener,
         ProgramDialogFragment.OnOptionSelectedListener,
         LoaderManager.LoaderCallbacks<ProgramOverviewFragmentForm>,
-        AdapterView.OnItemSelectedListener, SwipeRefreshLayout.OnRefreshListener, IEnroller,
+        AdapterView.OnItemSelectedListener,
+        SwipeRefreshLayout.OnRefreshListener,
+        IEnroller,
         OnBackPressedListener {
 
     public static final String CLASS_TAG = ProgramOverviewFragment.class.getSimpleName();
@@ -208,8 +204,9 @@ public class ProgramOverviewFragment extends AbsProgramRuleFragment implements V
         setProgramRuleFragmentHelper(new ProgramOverviewRuleHelper(this));
     }
 
-    public static ProgramOverviewFragment newInstance(String orgUnitId, String programId,
-            long trackedEntityInstanceId) {
+    public static ProgramOverviewFragment newInstance(String orgUnitId,
+                                                      String programId,
+                                                      long trackedEntityInstanceId) {
         ProgramOverviewFragment fragment = new ProgramOverviewFragment();
         Bundle args = new Bundle();
         args.putString(ORG_UNIT_ID, orgUnitId);
@@ -230,7 +227,6 @@ public class ProgramOverviewFragment extends AbsProgramRuleFragment implements V
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-
     }
 
     @Override
@@ -240,8 +236,7 @@ public class ProgramOverviewFragment extends AbsProgramRuleFragment implements V
 
     @Override
     public void onDestroyView() {
-        if (getActivity() != null &&
-                getActivity() instanceof AppCompatActivity) {
+        if (getActivity() != null && getActivity() instanceof AppCompatActivity) {
             getActionBar().setDisplayShowTitleEnabled(true);
             getActionBar().setDisplayHomeAsUpEnabled(false);
             getActionBar().setHomeButtonEnabled(false);
@@ -434,6 +429,7 @@ public class ProgramOverviewFragment extends AbsProgramRuleFragment implements V
         int index = -1;
         for (int i = 0; i < mSpinnerAdapter.getCount(); i++) {
             Program program = (Program) mSpinnerAdapter.getItem(i);
+            assert program != null;
             if (program.getName().equals(programName)) {
                 index = i;
             }
@@ -544,8 +540,8 @@ public class ProgramOverviewFragment extends AbsProgramRuleFragment implements V
             } else {
                 enrollmentLayout.setVisibility(View.VISIBLE);
                 missingEnrollmentLayout.setVisibility(View.GONE);
-                profileCardView.setClickable(
-                        true); //is set to false when TEI doesn't have an applicable enrollment.
+                profileCardView.setClickable(true);
+                //is set to false when TEI doesn't have an applicable enrollment.
                 // todo why?
                 profileButton.setClickable(true);
             }
@@ -829,6 +825,7 @@ public class ProgramOverviewFragment extends AbsProgramRuleFragment implements V
     public static void showConfirmDeleteRelationshipDialog(final Relationship relationship,
             final TrackedEntityInstance trackedEntityInstance, Activity activity) {
         if (activity == null) return;
+        if (activity == null) return;
         UiUtils.showConfirmDialog(activity, activity.getString(R.string.confirm),
                 activity.getString(R.string.confirm_delete_relationship),
                 activity.getString(R.string.delete), activity.getString(R.string.cancel),
@@ -952,6 +949,7 @@ public class ProgramOverviewFragment extends AbsProgramRuleFragment implements V
         List<TrackedEntityAttributeValue> trackedEntityAttributeValues =
                 TrackerController.getVisibleTrackedEntityAttributeValues(
                         trackedEntityInstance.getLocalId());
+
         {
             //update profile view
             if (trackedEntityAttributeValues != null && trackedEntityAttributeValues.size()>0) {
@@ -1025,9 +1023,11 @@ public class ProgramOverviewFragment extends AbsProgramRuleFragment implements V
             DateTime enrollmentDate, DateTime incidentDate) {
         String enrollmentDateString = enrollmentDate.toString();
         String incidentDateString = null;
+
         if (incidentDate != null) {
             incidentDateString = incidentDate.toString();
         }
+
         if (trackedEntityInstance == null) {
             HolderActivity.navigateToEnrollmentDataEntryFragment(getActivity(),
                     mState.getOrgUnitId(), mState.getProgramId(), enrollmentDateString,
@@ -1039,15 +1039,26 @@ public class ProgramOverviewFragment extends AbsProgramRuleFragment implements V
         }
     }
 
+    //TODO the first if navigates to a new event. The historytable should be provided here also.
     public void showDataEntryFragment(Event event, String programStage) {
         Bundle args = getArguments();
         if (event == null) {
-            HolderActivity.navigateToDataEntryFragment(getActivity(), args.getString(ORG_UNIT_ID),
-                    args.getString(PROGRAM_ID), programStage, mForm.getEnrollment().getLocalId());
+            HolderActivity.navigateToDataEntryFragment(
+                    getActivity(),
+                    args.getString(ORG_UNIT_ID),
+                    args.getString(PROGRAM_ID),
+                    programStage,
+                    mForm.getEnrollment().getLocalId());
         } else {
-            HolderActivity.navigateToDataEntryFragment(getActivity(), args.getString(ORG_UNIT_ID),
-                    args.getString(PROGRAM_ID), programStage,
-                    mForm.getEnrollment().getLocalId(), event.getLocalId());
+            HolderActivity.navigateToDataEntryFragment(
+                    getActivity(),
+                    args.getString(ORG_UNIT_ID),
+                    args.getString(PROGRAM_ID),
+                    programStage,
+                    mForm.getEnrollment().getLocalId(),
+                    event.getLocalId(),
+                    mForm.getProgramStagesEventsTable()
+            );
         }
     }
 
@@ -1112,107 +1123,87 @@ public class ProgramOverviewFragment extends AbsProgramRuleFragment implements V
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.select_program: {
-                ProgramDialogFragment fragment = ProgramDialogFragment
-                        .newInstance(this, mState.getOrgUnitId(),
-                                ProgramType.WITH_REGISTRATION);
-                fragment.show(getChildFragmentManager());
-                break;
-            }
+            case R.id.select_program: showProgramDialog(); break;
+            case R.id.neweventbutton: navigateToNewDataEntry(view); break;
+            case R.id.eventbackground: navigateToExistingDataEntry(view); break;
+            case R.id.complete: showConfirmCompleteDialog(); break;
+            case R.id.re_open: reOpenEnrollment(); break;
+            case R.id.terminate: showConfirmTerminateDialog(); break;
+            case R.id.followupButton: toggleFollowup(); break;
+            case R.id.newenrollmentbutton: createEnrollment(); break;
+            case R.id.profile_cardview: editTrackedEntityInstanceProfile(); break;
+            case R.id.profile_button: editTrackedEntityInstanceProfile(); break;
+            case R.id.enrollmentstatus: handleShowStatusDialog(); break;
+            case R.id.pullrelationshipbutton: refreshRelationships(); break;
+            case R.id.addrelationshipbutton: showAddRelationshipFragment(); break;
+            case R.id.enrollmentLayout: editEnrollmentDates();
+        }
+    }
 
-            case R.id.neweventbutton: {
-                if (mForm.getEnrollment().getStatus().equals(Enrollment.ACTIVE)) {
-                    ProgramStage programStage = (ProgramStage) view.getTag();
-                    showDataEntryFragment(null, programStage.getUid());
-                }
-                break;
-            }
+    private void navigateToNewDataEntry(View view) {
+        if (mForm.getEnrollment().getStatus().equals(Enrollment.ACTIVE)) {
+            ProgramStage programStage = (ProgramStage) view.getTag();
+            showDataEntryFragment(null, programStage.getUid());
+        }
+    }
 
-            case R.id.eventbackground: {
-                if (mForm.getEnrollment().getStatus().equals(Enrollment.ACTIVE)) {
-                    Event event = (Event) view.getTag();
-                    showDataEntryFragment(event, event.getProgramStageId());
-                }
-                break;
-            }
+    private void navigateToExistingDataEntry(View view) {
+        if (mForm.getEnrollment().getStatus().equals(Enrollment.ACTIVE)) {
+            Event event = (Event) view.getTag();
+            showDataEntryFragment(event, event.getProgramStageId());
+        }
+    }
 
-            case R.id.complete: {
-                UiUtils.showConfirmDialog(getActivity(),
-                        getString(R.string.un_enroll),
-                        getString(R.string.confirm_complete_enrollment),
-                        getString(R.string.un_enroll),
-                        getString(R.string.cancel),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                completeEnrollment();
-                            }
-                        });
-                break;
-            }
-            case R.id.re_open: {
-                Enrollment enrollment = getLastEnrollmentForTrackedEntityInstance();
-                if(enrollment!=null) {
-                    enrollment.setStatus(Enrollment.ACTIVE);
-                    enrollment.setFromServer(false);
-                    enrollment.async().save();
-                    markParentsAsNonFromServer();
-                    refreshUi();
+    private void showProgramDialog() {
+        ProgramDialogFragment fragment = ProgramDialogFragment.newInstance(
+                this,
+                mState.getOrgUnitId(),
+                ProgramType.WITH_REGISTRATION);
+        fragment.show(getChildFragmentManager());
+    }
 
-                }
-                break;
-            }
+    private void showConfirmCompleteDialog() {
+        UiUtils.showConfirmDialog(getActivity(),
+                getString(R.string.un_enroll),
+                getString(R.string.confirm_complete_enrollment),
+                getString(R.string.un_enroll),
+                getString(R.string.cancel),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        completeEnrollment();
+                    }
+                });
+    }
 
-            case R.id.terminate: {
-                UiUtils.showConfirmDialog(getActivity(),
-                        getString(R.string.terminate),
-                        getString(R.string.confirm_terminate_enrollment),
-                        getString(R.string.yes),
-                        getString(R.string.no),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                terminateEnrollment();
-                            }
-                        });
-                break;
-            }
+    private void reOpenEnrollment() {
+        Enrollment enrollment = getLastEnrollmentForTrackedEntityInstance();
+        if(enrollment != null) {
+            enrollment.setStatus(Enrollment.ACTIVE);
+            enrollment.setFromServer(false);
+            enrollment.async().save();
+            markParentsAsNonFromServer();
+            refreshUi();
+        }
+    }
 
-            case R.id.followupButton: {
-                toggleFollowup();
-                break;
-            }
+    private void showConfirmTerminateDialog() {
+        UiUtils.showConfirmDialog(getActivity(),
+                getString(R.string.terminate),
+                getString(R.string.confirm_terminate_enrollment),
+                getString(R.string.yes),
+                getString(R.string.no),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        terminateEnrollment();
+                    }
+                });
+    }
 
-            case R.id.newenrollmentbutton: {
-                createEnrollment();
-                break;
-            }
-
-            case R.id.profile_cardview: {
-                editTrackedEntityInstanceProfile();
-                break;
-            }
-            case R.id.profile_button: {
-                editTrackedEntityInstanceProfile();
-                break;
-            }
-            case R.id.enrollmentstatus: {
-                if (mForm != null && mForm.getEnrollment() != null) {
-                    showStatusDialog(mForm.getEnrollment());
-                }
-                break;
-            }
-            case R.id.pullrelationshipbutton: {
-                refreshRelationships();
-                break;
-            }
-            case R.id.addrelationshipbutton: {
-                showAddRelationshipFragment();
-                break;
-            }
-            case R.id.enrollmentLayout: {
-                editEnrollmentDates();
-            }
+    private void handleShowStatusDialog() {
+        if (mForm != null && mForm.getEnrollment() != null) {
+            showStatusDialog(mForm.getEnrollment());
         }
     }
 
@@ -1231,10 +1222,12 @@ public class ProgramOverviewFragment extends AbsProgramRuleFragment implements V
 
     private Enrollment getLastEnrollmentForTrackedEntityInstance() {
         List<Enrollment> enrollments = TrackerController.getEnrollments(
-                mForm.getTrackedEntityInstance(), mForm.getProgram().getUid(), mForm.getTrackedEntityInstance().getOrgUnit());
-         if(enrollments==null || enrollments.size()==0) {
-            return null;
-        }
+                mForm.getTrackedEntityInstance(),
+                mForm.getProgram().getUid(),
+                mForm.getTrackedEntityInstance().getOrgUnit());
+
+        if(enrollments == null || enrollments.size() == 0) return null;
+
         EnrollmentDateComparator comparator = new EnrollmentDateComparator();
         Collections.reverseOrder(comparator);
         Collections.sort(enrollments, comparator);
@@ -1252,15 +1245,17 @@ public class ProgramOverviewFragment extends AbsProgramRuleFragment implements V
 
     private void editEnrollmentDates() {
         if (mForm != null && mForm.getEnrollment() != null) {
-            HolderActivity.navigateToEnrollmentDateFragment(getActivity(),
+            HolderActivity.navigateToEnrollmentDateFragment(
+                    getActivity(),
                     mForm.getEnrollment().getLocalId());
         }
-
     }
 
     private void editTrackedEntityInstanceProfile() {
-        HolderActivity.navigateToTrackedEntityInstanceProfileFragment(getActivity(), getArguments().
-                        getLong(TRACKEDENTITYINSTANCE_ID), getArguments().getString(PROGRAM_ID),
+        HolderActivity.navigateToTrackedEntityInstanceProfileFragment(
+                getActivity(),
+                getArguments().getLong(TRACKEDENTITYINSTANCE_ID),
+                getArguments().getString(PROGRAM_ID),
                 mForm.getEnrollment().getLocalId());
     }
 
@@ -1268,15 +1263,18 @@ public class ProgramOverviewFragment extends AbsProgramRuleFragment implements V
         if (mForm == null || mForm.getTrackedEntityInstance() == null) return;
         RegisterRelationshipDialogFragment fragment =
                 RegisterRelationshipDialogFragment.newInstance(
-                        mForm.getTrackedEntityInstance().getLocalId(), mForm.getProgram().getUid());
+                        mForm.getTrackedEntityInstance().getLocalId(),
+                        mForm.getProgram().getUid());
         fragment.show(getChildFragmentManager(), CLASS_TAG);
     }
 
     void displayKeyValuePair(ProgramRuleAction programRuleAction) {
-        FlowLayout programIndicatorLayout = (FlowLayout) programIndicatorCardView.findViewById(
-                R.id.keyvaluelayout);
-        KeyValueView keyValueView = new KeyValueView(programRuleAction.getContent(),
-                ProgramRuleService.getCalculatedConditionValue(programRuleAction.getData()));
+        FlowLayout programIndicatorLayout =
+                (FlowLayout) programIndicatorCardView.findViewById(R.id.keyvaluelayout);
+        KeyValueView keyValueView =
+                new KeyValueView(
+                        programRuleAction.getContent(),
+                        ProgramRuleService.getCalculatedConditionValue(programRuleAction.getData()));
         FlowLayout.LayoutParams layoutParams = new FlowLayout.LayoutParams(10, 10);
         View view = keyValueView.getView(getLayoutInflater(getArguments()), programIndicatorLayout);
         view.setLayoutParams(layoutParams);
@@ -1284,12 +1282,15 @@ public class ProgramOverviewFragment extends AbsProgramRuleFragment implements V
     }
 
     void displayText(ProgramRuleAction programRuleAction) {
-        LinearLayout programIndicatorLayout = (LinearLayout) programIndicatorCardView.findViewById(
-                R.id.textlayout);
+        LinearLayout programIndicatorLayout =
+                (LinearLayout) programIndicatorCardView.findViewById(R.id.textlayout);
         PlainTextRow textRow = new PlainTextRow(
                 ProgramRuleService.getCalculatedConditionValue(programRuleAction.getData()));
-        View view = textRow.getView(getChildFragmentManager(), getLayoutInflater(getArguments()),
-                null, programIndicatorLayout);
+        View view = textRow.getView(
+                getChildFragmentManager(),
+                getLayoutInflater(getArguments()),
+                null,
+                programIndicatorLayout);
         view.findViewById(R.id.text_label).setVisibility(View.GONE);
         view.findViewById(R.id.detailed_info_button_layout).setVisibility(View.GONE);
         programIndicatorLayout.addView(view);
@@ -1302,14 +1303,11 @@ public class ProgramOverviewFragment extends AbsProgramRuleFragment implements V
     }
 
     @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-
-    }
+    public void onNothingSelected(AdapterView<?> parent) {}
 
     @Override
     public void onOptionSelected(int dialogId, int position, String id, String name) {
         switch (dialogId) {
-
             case ProgramDialogFragment.ID: {
                 onProgramSelected(id, name);
                 break;
@@ -1406,7 +1404,6 @@ public class ProgramOverviewFragment extends AbsProgramRuleFragment implements V
         getActivity().finish();
         return false;
     }
-
 
     @Subscribe
     public void onShowDetailedInfo(OnDetailedInfoButtonClick eventClick)

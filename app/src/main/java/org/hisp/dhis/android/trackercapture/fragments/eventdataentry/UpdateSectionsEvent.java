@@ -27,24 +27,10 @@
  *
  */
 
-package org.hisp.dhis.android.trackercapture;
-
-import android.app.Activity;
-
-import org.hisp.dhis.android.sdk.persistence.Dhis2Application;
+package org.hisp.dhis.android.trackercapture.fragments.eventdataentry;
 
 /**
- * @author Simen Skogly Russnes on 02.03.15.
+ * @author Simen Skogly Russnes on 01.09.15.
  */
-public class TrackerCaptureApplication extends Dhis2Application {
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-    }
-
-    @Override
-    public Class<? extends Activity> getMainActivity() {
-        return new MainActivity().getClass();
-    }
+public class UpdateSectionsEvent {
 }

@@ -81,6 +81,7 @@ public class MainActivity extends AbsHomeActivity {
 
         boolean hasPermissionLocation = (ContextCompat.checkSelfPermission(MainActivity.this,
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED);
+
         if (!hasPermissionLocation) {
             ActivityCompat.requestPermissions(MainActivity.this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
@@ -110,7 +111,9 @@ public class MainActivity extends AbsHomeActivity {
 
     private void setUpNavigationView(Bundle savedInstanceState) {
         removeMenuItem(R.id.drawer_item_profile);
+
         addMenuItem(11, R.drawable.ic_add, R.string.enroll);
+
         if (savedInstanceState == null) {
             onNavigationItemSelected(getNavigationView().getMenu()
                     .findItem(11));
@@ -119,14 +122,16 @@ public class MainActivity extends AbsHomeActivity {
         UserAccount userAccount = MetaDataController.getUserAccount();
         String name = "";
         if (userAccount != null) {
-            if (!isEmpty(userAccount.getFirstName()) &&
-                    !isEmpty(userAccount.getSurname())) {
+            if (!isEmpty(userAccount.getFirstName()) && !isEmpty(userAccount.getSurname())) {
+
                 name = String.valueOf(userAccount.getFirstName().charAt(0)) +
                         String.valueOf(userAccount.getSurname().charAt(0));
-            } else if (userAccount.getDisplayName() != null &&
-                    userAccount.getDisplayName().length() > 1) {
+
+            } else if (userAccount.getDisplayName() != null && userAccount.getDisplayName().length() > 1) {
+
                 name = String.valueOf(userAccount.getDisplayName().charAt(0)) +
                         String.valueOf(userAccount.getDisplayName().charAt(1));
+
             }
 
             getUsernameTextView().setText(userAccount.getDisplayName());
@@ -140,22 +145,20 @@ public class MainActivity extends AbsHomeActivity {
     @Override
     protected Fragment getProfileFragment() {
         return new Fragment();
-//        return WrapperFragment.newInstance(ProfileFragment.class,
-//                getString(R.string.drawer_item_profile));
     }
 
     @NonNull
     @Override
     protected Fragment getSettingsFragment() {
         return new Fragment();
-//        return WrapperFragment.newInstance(SettingsFragment.class,
-//                getString(R.string.drawer_item_settings));
     }
 
     @Override
     protected boolean onItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == 11) {
-            attachFragment(WrapperFragment.newInstance(SelectProgramFragment.class, getString(R.string.app_name)));
+            attachFragment(WrapperFragment.newInstance(
+                            SelectProgramFragment.class,
+                            getString(R.string.app_name)));
             return true;
         }
         return false;
@@ -217,13 +220,6 @@ public class MainActivity extends AbsHomeActivity {
             attachFragment(getInformationFragment());
             isSelected = true;
         }
-        /*else if (menuItemId == R.id.drawer_item_help) {
-            attachFragment(getHelpFragment());
-            isSelected = true;
-        } else if (menuItemId == R.id.drawer_item_about) {
-            attachFragment(getAboutFragment());
-            isSelected = true;
-        }*/
 
         isSelected = onItemSelected(menuItem) || isSelected;
         if (isSelected) {
@@ -241,7 +237,8 @@ public class MainActivity extends AbsHomeActivity {
             args.putString(InformationFragment.USERNAME, session.getCredentials().getUsername());
             args.putString(InformationFragment.URL, String.valueOf(session.getServerUrl()));
         }
-        return WrapperFragment.newInstance(InformationFragment.class,
+        return WrapperFragment.newInstance(
+                InformationFragment.class,
                 getString(R.string.drawer_item_information),
                 args);
     }
