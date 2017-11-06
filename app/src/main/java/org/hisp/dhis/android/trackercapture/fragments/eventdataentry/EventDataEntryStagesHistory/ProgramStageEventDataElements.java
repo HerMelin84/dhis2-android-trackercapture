@@ -1,6 +1,7 @@
 package org.hisp.dhis.android.trackercapture.fragments.eventdataentry.EventDataEntryStagesHistory;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -51,21 +52,18 @@ public class ProgramStageEventDataElements implements Comparable<ProgramStageEve
         for (DataValue dataValue : dataValues) {
             if (dataValue.getDataElement().equals(dataElement)) {
                 String value = dataValue.getValue();
-
                 switch (value) {
-                    case "true": return "yes";
-                    case "no": return "no";
-                    case "": return "no";
+                    case "true": return "Yes";
+                    case "false": return "No";
+                    case "": return "no value";
                 }
-
                 return dataValue.getValue();
             }
         }
-
-        return "no";
+        return "no value";
     }
 
-    public int getColumnLength() {
+    int getColumnLength() {
         return columnLength;
     }
 
@@ -78,17 +76,13 @@ public class ProgramStageEventDataElements implements Comparable<ProgramStageEve
         dataElementValues.add(dataElementValue);
     }
 
-    public String getDateValue() {
+    String getDateValue() {
         return reportingDateString;
     }
 
-    public String getStageName() {
+    String getStageName() {
         return stageName;
     }
-
-    ArrayList<String> getDateElementNames() { return dateElementNames; }
-
-    ArrayList<String> getDateElementValues() { return dataElementValues; }
 
     @Override
     public int compareTo(@NonNull ProgramStageEventDataElements eventValues) {

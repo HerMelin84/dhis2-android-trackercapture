@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,6 +30,8 @@ public class EventDataEntryStagesHistoryFragment extends BaseFragment implements
     public static final String TAG = EventDataEntryStagesHistoryFragment.class.getSimpleName();
 
     private ActionBar toolbar;
+    private boolean prototype_2 = true;
+    private boolean previouspregnancies = false;
     private LinearLayout mainLayout;
     private LinearLayout historyColumns;
     private ProgramStagesEventsTable programStagesEventsTable;
@@ -94,6 +97,7 @@ public class EventDataEntryStagesHistoryFragment extends BaseFragment implements
     }
 
     private void addPreviousPregnanciesStageColumn(int columnLength) {
+        previouspregnancies = true;
         for (ProgramStageEventDataElements event : programStagesEventsTable.getProgramStageEventValues()) {
             if (event.getStageName().equals("Previous pregnancies")) {
 
@@ -115,6 +119,7 @@ public class EventDataEntryStagesHistoryFragment extends BaseFragment implements
     }
 
     public void addANCLabelColumn(int columnLength) {
+        previouspregnancies = false;
         String label = getBoldString("ANC");
 
         ArrayList<String> dataElementNames = getANC1DataElementNames();
@@ -132,8 +137,9 @@ public class EventDataEntryStagesHistoryFragment extends BaseFragment implements
 
             ArrayList<String> dataElementValues = event.getDataElementValues();
 
-            //ArrayList<String> dataElementNames = event.getDataElementNames();
-            ArrayList<String> dataElementNames = getEmptyStringArrayList(dataElementValues.size());
+            ArrayList<String> dataElementNames = prototype_2
+                    ? getEmptyStringArrayList(dataElementValues.size())
+                    : event.getDataElementNames();
 
             historyColumns.addView(createEventStageColumn(stageName, date,
                     dataElementNames, dataElementValues, columnLength));
@@ -169,7 +175,11 @@ public class EventDataEntryStagesHistoryFragment extends BaseFragment implements
                                      ArrayList<String> dataElementValues,
                                      int i) {
         String label = getBoldStringWithFontSize(dataElementNames.get(i), 10);
-        String value = getNewLineString(dataElementValues.get(i));
+
+        String value = (prototype_2 && !previouspregnancies)
+                ? dataElementValues.get(i)
+                : getNewLineString(dataElementValues.get(i));
+
         column.addView(createTextBox(label + value, R.layout.text_box_white));
     }
 
