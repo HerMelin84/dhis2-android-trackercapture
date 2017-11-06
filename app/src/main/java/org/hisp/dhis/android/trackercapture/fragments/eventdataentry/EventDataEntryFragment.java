@@ -59,7 +59,6 @@ import org.hisp.dhis.android.sdk.controllers.metadata.MetaDataController;
 import org.hisp.dhis.android.sdk.controllers.tracker.TrackerController;
 import org.hisp.dhis.android.sdk.persistence.Dhis2Application;
 import org.hisp.dhis.android.sdk.persistence.loaders.DbLoader;
-import org.hisp.dhis.android.sdk.persistence.models.DataElement;
 import org.hisp.dhis.android.sdk.persistence.models.DataValue;
 import org.hisp.dhis.android.sdk.persistence.models.Enrollment;
 import org.hisp.dhis.android.sdk.persistence.models.Event;
@@ -69,7 +68,7 @@ import org.hisp.dhis.android.sdk.persistence.models.ProgramIndicator;
 import org.hisp.dhis.android.sdk.persistence.models.ProgramRule;
 import org.hisp.dhis.android.sdk.persistence.models.ProgramStage;
 import org.hisp.dhis.android.sdk.persistence.models.ProgramStageDataElement;
-import org.hisp.dhis.android.sdk.persistence.models.ProgramStagesEventsTable;
+import org.hisp.dhis.android.trackercapture.fragments.eventdataentry.EventDataEntryStagesHistory.ProgramStagesEventsTable;
 import org.hisp.dhis.android.sdk.persistence.models.TrackedEntityInstance;
 import org.hisp.dhis.android.sdk.ui.adapters.SectionAdapter;
 import org.hisp.dhis.android.sdk.ui.adapters.rows.dataentry.DataEntryRowTypes;
@@ -121,17 +120,7 @@ public class EventDataEntryFragment extends DataEntryFragment<EventDataEntryFrag
     private Spinner spinner;
     private SectionAdapter spinnerAdapter;
     private EventDataEntryFragmentForm form;
-
-
-    /**
-     * Wooooo this is the things
-     */
-
     private ProgramStagesEventsTable programStagesEventsTable;
-
-    /**
-     * Wooooo this is the things
-     */
 
     private DateTime scheduledDueDate;
 
@@ -311,7 +300,7 @@ public class EventDataEntryFragment extends DataEntryFragment<EventDataEntryFrag
         saveThread.setEvent(form.getEvent());
 
         if (form.getStatusRow() != null) {
-            setStatusRowFragmentActicity();
+            setStatusRowFragmentActivity();
             setSeeHistoryButtonOnClickListener();
         }
 
@@ -328,7 +317,7 @@ public class EventDataEntryFragment extends DataEntryFragment<EventDataEntryFrag
         initiateEvaluateProgramRules();
     }
 
-    private void setStatusRowFragmentActicity() {
+    private void setStatusRowFragmentActivity() {
         form.getStatusRow().setFragmentActivity(getActivity());
     }
 
@@ -498,17 +487,21 @@ public class EventDataEntryFragment extends DataEntryFragment<EventDataEntryFrag
         }
 
         if (isEmpty(form.getEvent().getEventDate())) {
-            String reportDateDescription = form.getStage().getReportDateDescription() == null ?
-                    getString(R.string.report_date) : form.getStage().getReportDateDescription();
+            String reportDateDescription;
+
+            reportDateDescription = form.getStage().getReportDateDescription() == null ?
+                    getString(R.string.report_date) :
+                    form.getStage().getReportDateDescription();
+
             if(!errors.containsKey(ErrorType.MANDATORY)){
                 errors.put(ErrorType.MANDATORY, new ArrayList<String>());
             }
+
             errors.get(ErrorType.MANDATORY).add(reportDateDescription);
         }
 
         Map<String, ProgramStageDataElement> dataElements = toMap(
-                form.getStage().getProgramStageDataElements()
-        );
+                form.getStage().getProgramStageDataElements());
 
         for (DataValue dataValue : form.getEvent().getDataValues()) {
             ProgramStageDataElement dataElement = dataElements.get(dataValue.getDataElement());
@@ -937,6 +930,7 @@ public class EventDataEntryFragment extends DataEntryFragment<EventDataEntryFrag
         form.getEnrollment().setEvents(eventsForEnrollment);
         form.getEnrollment().save();
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
         if (menuItem.getItemId() == android.R.id.home) {

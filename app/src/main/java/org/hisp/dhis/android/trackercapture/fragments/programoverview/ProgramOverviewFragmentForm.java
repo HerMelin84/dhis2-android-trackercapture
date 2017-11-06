@@ -31,7 +31,7 @@ package org.hisp.dhis.android.trackercapture.fragments.programoverview;
 
 import org.hisp.dhis.android.sdk.persistence.models.Enrollment;
 import org.hisp.dhis.android.sdk.persistence.models.Program;
-import org.hisp.dhis.android.sdk.persistence.models.ProgramStagesEventsTable;
+import org.hisp.dhis.android.trackercapture.fragments.eventdataentry.EventDataEntryStagesHistory.ProgramStagesEventsTable;
 import org.hisp.dhis.android.sdk.persistence.models.ProgramIndicator;
 import org.hisp.dhis.android.sdk.persistence.models.TrackedEntityInstance;
 import org.hisp.dhis.android.sdk.ui.adapters.rows.dataentry.IndicatorRow;

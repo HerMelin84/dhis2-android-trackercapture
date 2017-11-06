@@ -283,8 +283,7 @@ public class ProgramOverviewFragment extends AbsProgramRuleFragment implements
                 org.hisp.dhis.android.sdk.R.color.Blue, org.hisp.dhis.android.sdk.R.color.orange);
         mSwipeRefreshLayout.setOnRefreshListener(this);
 
-        relationshipsLinearLayout = (LinearLayout) header.findViewById(
-                R.id.relationships_linearlayout);
+        relationshipsLinearLayout = (LinearLayout) header.findViewById(R.id.relationships_linearlayout);
 
         refreshRelationshipButton = (Button) header.findViewById(R.id.pullrelationshipbutton);
         refreshRelationshipButton.setOnClickListener(this);
@@ -338,8 +337,7 @@ public class ProgramOverviewFragment extends AbsProgramRuleFragment implements
 
         Bundle fragmentArguments = getArguments();
 
-        if (savedInstanceState != null &&
-                savedInstanceState.getParcelable(STATE) != null) {
+        if (savedInstanceState != null && savedInstanceState.getParcelable(STATE) != null) {
             mState = savedInstanceState.getParcelable(STATE);
         }
         if (mState == null) {
@@ -396,7 +394,6 @@ public class ProgramOverviewFragment extends AbsProgramRuleFragment implements
     }
 
     public void onRestoreState(boolean hasPrograms) {
-
         ProgramOverviewFragmentState backedUpState = new ProgramOverviewFragmentState(mState);
         if (!backedUpState.isProgramEmpty()) {
             onProgramSelected(
@@ -1039,7 +1036,6 @@ public class ProgramOverviewFragment extends AbsProgramRuleFragment implements
         }
     }
 
-    //TODO the first if navigates to a new event. The historytable should be provided here also.
     public void showDataEntryFragment(Event event, String programStage) {
         Bundle args = getArguments();
         if (event == null) {
@@ -1048,7 +1044,8 @@ public class ProgramOverviewFragment extends AbsProgramRuleFragment implements
                     args.getString(ORG_UNIT_ID),
                     args.getString(PROGRAM_ID),
                     programStage,
-                    mForm.getEnrollment().getLocalId());
+                    mForm.getEnrollment().getLocalId(),
+                    mForm.getProgramStagesEventsTable());
         } else {
             HolderActivity.navigateToDataEntryFragment(
                     getActivity(),

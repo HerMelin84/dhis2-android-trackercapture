@@ -6,15 +6,16 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import org.hisp.dhis.android.sdk.persistence.models.ProgramStagesEventsTable;
+import org.hisp.dhis.android.trackercapture.fragments.eventdataentry.EventDataEntryStagesHistory.ProgramStagesEventsTable;
 import org.hisp.dhis.android.sdk.persistence.models.TrackedEntityInstance;
 import org.hisp.dhis.android.sdk.ui.activities.OnBackPressedListener;
 
 import org.hisp.dhis.android.trackercapture.R;
-import org.hisp.dhis.android.trackercapture.fragments.eventdataentry.EventDataEntryStagesHistoryFragment;
+import org.hisp.dhis.android.trackercapture.fragments.eventdataentry.EventDataEntryStagesHistory.EventDataEntryStagesHistoryFragment;
 import org.hisp.dhis.android.trackercapture.fragments.eventdataentry.EventDataEntryFragment;
 import org.hisp.dhis.android.trackercapture.fragments.trackedentityinstance.TrackedEntityInstanceDataEntryFragment;
 import org.hisp.dhis.android.trackercapture.fragments.enrollment.EnrollmentDataEntryFragment;
@@ -87,8 +88,7 @@ public class HolderActivity extends AbsHomeActivity {
             case ARG_TYPE_ENROLLMENTFRAGMENT: {
                 EnrollmentDataEntryFragment fragment = new EnrollmentDataEntryFragment();
                 onBackPressedListener = fragment;
-                fragment
-                        .setArguments(getIntent().getExtras());
+                fragment.setArguments(getIntent().getExtras());
                 getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.content_frame, fragment)
@@ -108,8 +108,7 @@ public class HolderActivity extends AbsHomeActivity {
             case ARG_TYPE_SETTINGSFRAGMENT: {
                 onBackPressedListener = null;
                 SettingsFragment settingsFragment = new SettingsFragment();
-                settingsFragment
-                        .setArguments(getIntent().getExtras());
+                settingsFragment.setArguments(getIntent().getExtras());
                 getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.content_frame, settingsFragment)
@@ -119,8 +118,7 @@ public class HolderActivity extends AbsHomeActivity {
             case ARG_TYPE_DATAENTRYFRAGMENT: {
                 EventDataEntryFragment eventDataEntryFragment = new EventDataEntryFragment();
                 onBackPressedListener = eventDataEntryFragment;
-                eventDataEntryFragment
-                        .setArguments(getIntent().getExtras());
+                eventDataEntryFragment.setArguments(getIntent().getExtras());
 
                 if (getIntent().hasExtra(EventDataEntryFragment.PROGRAM_EVENTS_HISTORY)) {
                     setProgramStagesEventsTable(eventDataEntryFragment);
@@ -135,8 +133,7 @@ public class HolderActivity extends AbsHomeActivity {
             case ARG_TYPE_DATAENTRYSTAGEHISTORYFRAGMENT: {
                 EventDataEntryStagesHistoryFragment eventHistoryFragment = new EventDataEntryStagesHistoryFragment();
                 onBackPressedListener = eventHistoryFragment;
-                eventHistoryFragment
-                        .setArguments(getIntent().getExtras());
+                eventHistoryFragment.setArguments(getIntent().getExtras());
 
                 if (getIntent().hasExtra(EventDataEntryStagesHistoryFragment.PROGRAM_EVENTS_HISTORY)) {
                     ProgramStagesEventsTable programStagesEventsTable =
@@ -145,8 +142,6 @@ public class HolderActivity extends AbsHomeActivity {
                                             EventDataEntryStagesHistoryFragment.PROGRAM_EVENTS_HISTORY);
                     eventHistoryFragment.setProgramStagesEventsTable(programStagesEventsTable);
                 }
-
-                toolbar.setTitle("Svær pung bro!");
 
                 getSupportFragmentManager()
                         .beginTransaction()
@@ -157,8 +152,8 @@ public class HolderActivity extends AbsHomeActivity {
             case ARG_TYPE_TRACKEDENTITYINSTANCEPROFILE: {
                 TrackedEntityInstanceProfileFragment trackedEntityInstanceProfileFragment = new TrackedEntityInstanceProfileFragment();
                 onBackPressedListener = trackedEntityInstanceProfileFragment;
-                trackedEntityInstanceProfileFragment
-                        .setArguments(getIntent().getExtras());
+                trackedEntityInstanceProfileFragment.setArguments(getIntent().getExtras());
+
                 getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.content_frame, trackedEntityInstanceProfileFragment)
@@ -168,8 +163,8 @@ public class HolderActivity extends AbsHomeActivity {
             case ARG_TYPE_TRACKEDENTITYINSTANCEDATAENTRYFRAGMENT: {
                 TrackedEntityInstanceDataEntryFragment trackedEntityInstanceDataEntryFragment = new TrackedEntityInstanceDataEntryFragment();
                 onBackPressedListener = trackedEntityInstanceDataEntryFragment;
-                trackedEntityInstanceDataEntryFragment
-                        .setArguments(getIntent().getExtras());
+                trackedEntityInstanceDataEntryFragment.setArguments(getIntent().getExtras());
+
                 getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.content_frame, trackedEntityInstanceDataEntryFragment)
@@ -190,8 +185,8 @@ public class HolderActivity extends AbsHomeActivity {
             case ARG_TYPE_ONLINESEARCHFRAGMENT: {
                 onBackPressedListener = null;
                 OnlineSearchFragment onlineSearchFragment = new OnlineSearchFragment();
-                onlineSearchFragment
-                        .setArguments(getIntent().getExtras());
+                onlineSearchFragment.setArguments(getIntent().getExtras());
+
                 getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.content_frame, onlineSearchFragment)
@@ -201,8 +196,8 @@ public class HolderActivity extends AbsHomeActivity {
             case ARG_TYPE_ONLINESEARCHRESULTFRAGMENT: {
                 onBackPressedListener = null;
                 OnlineSearchResultFragment onlineSearchResultFragment = new OnlineSearchResultFragment();
-                onlineSearchResultFragment
-                        .setArguments(getIntent().getExtras());
+                onlineSearchResultFragment.setArguments(getIntent().getExtras());
+
                 getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.content_frame, onlineSearchResultFragment)
@@ -212,8 +207,8 @@ public class HolderActivity extends AbsHomeActivity {
             case ARG_TYPE_LOCALSEARCHFRAGMENT: {
                 onBackPressedListener = null;
                 LocalSearchFragment localSearchFragment = new LocalSearchFragment();
-                localSearchFragment
-                        .setArguments(getIntent().getExtras());
+                localSearchFragment.setArguments(getIntent().getExtras());
+
                 getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.content_frame, localSearchFragment)
@@ -223,8 +218,8 @@ public class HolderActivity extends AbsHomeActivity {
             case ARG_TYPE_LOCALSEARCHRESULTFRAGMENT: {
                 onBackPressedListener = null;
                 LocalSearchResultFragment localSearchResultFragment = new LocalSearchResultFragment();
-                localSearchResultFragment
-                        .setArguments(getIntent().getExtras());
+                localSearchResultFragment.setArguments(getIntent().getExtras());
+
                 getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.content_frame, localSearchResultFragment)
@@ -234,8 +229,8 @@ public class HolderActivity extends AbsHomeActivity {
             case ARG_TYPE_UPCOMINGEVENTSFRAGMENT: {
                 onBackPressedListener = null;
                 UpcomingEventsFragment upcomingEventsFragment = new UpcomingEventsFragment();
-                upcomingEventsFragment
-                        .setArguments(getIntent().getExtras());
+                upcomingEventsFragment.setArguments(getIntent().getExtras());
+
                 getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.content_frame, upcomingEventsFragment)
@@ -261,6 +256,7 @@ public class HolderActivity extends AbsHomeActivity {
     @Override
     protected boolean onItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == 11) {
+            Log.w("hola", item.getTitle()+"");
             attachFragment(WrapperFragment.newInstance(SelectProgramFragment.class, getString(R.string.app_name)));
             return true;
         }
@@ -312,16 +308,17 @@ public class HolderActivity extends AbsHomeActivity {
                                                    String orgUnitId,
                                                    String programId,
                                                    String programStageId,
-                                                   long localEnrollmentId) {
+                                                   long localEnrollmentId,
+                                                   ProgramStagesEventsTable programStagesEventsTable) {
         Intent intent = new Intent(activity, HolderActivity.class);
         intent.putExtra(EventDataEntryFragment.ORG_UNIT_ID, orgUnitId);
         intent.putExtra(EventDataEntryFragment.PROGRAM_ID, programId);
         intent.putExtra(EventDataEntryFragment.PROGRAM_STAGE_ID, programStageId);
         intent.putExtra(EventDataEntryFragment.ENROLLMENT_ID, localEnrollmentId);
+        intent.putExtra(EventDataEntryFragment.PROGRAM_EVENTS_HISTORY, programStagesEventsTable);
         intent.putExtra(ARG_TYPE, ARG_TYPE_DATAENTRYFRAGMENT);
         activity.startActivity(intent);
     }
-
 
     public static void navigateToDataEntryFragment(Activity activity,
                                                    String orgUnitId,

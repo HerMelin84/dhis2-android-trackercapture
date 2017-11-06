@@ -47,8 +47,7 @@ public class KeyValueView {
     }
 
     public View getView(LayoutInflater inflater, ViewGroup container) {
-        View root = inflater.inflate(
-                R.layout.keyvalueview, container, false);
+        View root = inflater.inflate(R.layout.keyvalueview, container, false);
         TextView label = (TextView) root.findViewById(R.id.label);
         TextView value = (TextView) root.findViewById(R.id.value);
 

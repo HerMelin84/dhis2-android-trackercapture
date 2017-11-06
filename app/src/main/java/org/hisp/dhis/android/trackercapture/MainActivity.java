@@ -131,7 +131,6 @@ public class MainActivity extends AbsHomeActivity {
 
                 name = String.valueOf(userAccount.getDisplayName().charAt(0)) +
                         String.valueOf(userAccount.getDisplayName().charAt(1));
-
             }
 
             getUsernameTextView().setText(userAccount.getDisplayName());

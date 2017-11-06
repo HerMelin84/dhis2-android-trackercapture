@@ -61,12 +61,12 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
             android:theme="@style/LoginScreenTheme"
-            android:windowSoftInputMode="adjustResize"></activity>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_main"
-            android:windowSoftInputMode="adjustPan"></activity>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".activities.HolderActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -74,7 +74,7 @@
 
         </activity>
 
-        <receiver android:name="org.hisp.dhis.android.sdk.services.PeriodicSynchronizer"></receiver>
+        <receiver android:name="org.hisp.dhis.android.sdk.services.PeriodicSynchronizer" />
         <receiver android:name="org.hisp.dhis.android.sdk.services.PeriodicSynchronizerAutoStarter">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

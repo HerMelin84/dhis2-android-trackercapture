@@ -1,10 +1,12 @@
-package org.hisp.dhis.android.trackercapture.fragments.eventdataentry;
+package org.hisp.dhis.android.trackercapture.fragments.eventdataentry.EventDataEntryStagesHistory;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -12,10 +14,9 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import org.hisp.dhis.android.sdk.persistence.models.ProgramStageEventDataElements;
 import org.hisp.dhis.android.trackercapture.R;
-import org.hisp.dhis.android.sdk.persistence.models.ProgramStagesEventsTable;
 import org.hisp.dhis.android.sdk.ui.activities.OnBackPressedListener;
+import org.hisp.dhis.client.sdk.ui.fragments.BaseFragment;
 
 import java.util.ArrayList;
 
@@ -23,9 +24,11 @@ import java.util.ArrayList;
  * Created by John Melin on 11/10/2017.
  */
 
-public class EventDataEntryStagesHistoryFragment extends Fragment implements OnBackPressedListener {
+public class EventDataEntryStagesHistoryFragment extends BaseFragment implements
+        OnBackPressedListener {
     public static final String TAG = EventDataEntryStagesHistoryFragment.class.getSimpleName();
 
+    private ActionBar toolbar;
     private LinearLayout mainLayout;
     private LinearLayout historyColumns;
     private ProgramStagesEventsTable programStagesEventsTable;
@@ -40,6 +43,7 @@ public class EventDataEntryStagesHistoryFragment extends Fragment implements OnB
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+
         this.inflater = inflater;
 
         mainLayout = (LinearLayout) inflater.inflate(R.layout.fragment_events_history, container, false);
@@ -49,6 +53,12 @@ public class EventDataEntryStagesHistoryFragment extends Fragment implements OnB
         setupHistoryTable();
 
         return mainLayout;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if (getActivity() instanceof AppCompatActivity) setupToolbar();
     }
 
     public void setCloseButtonListener() {
@@ -62,11 +72,11 @@ public class EventDataEntryStagesHistoryFragment extends Fragment implements OnB
     }
 
     public void setupHistoryTable() {
-        if(programStagesEventsTable == null) return;
+        if (programStagesEventsTable == null) return;
         int columnLength = getColumnLength();
 
-        // TODO sorting should rather be done here than in ProgramEventQuery for higher control and safety
-
+        // TODO sorting should rather be done here than in ProgramOverviewQuery for higher control and safety
+        // Look in core/util/eventDateComparator
         addPreviousPregnanciesStageColumn(columnLength);
 
         addANCLabelColumn(columnLength);
@@ -74,18 +84,18 @@ public class EventDataEntryStagesHistoryFragment extends Fragment implements OnB
         addANCStageColumns(columnLength);
     }
 
-    private int getColumnLength(){
+    private int getColumnLength() {
         int columnLength = 0;
-        for(ProgramStageEventDataElements event : programStagesEventsTable.getProgramStageEventValues()) {
+        for (ProgramStageEventDataElements event : programStagesEventsTable.getProgramStageEventValues()) {
             int tempLength = event.getColumnLength();
             if (tempLength > columnLength) columnLength = tempLength;
         }
         return columnLength;
     }
 
-    private void addPreviousPregnanciesStageColumn(int columnLength){
-        for(ProgramStageEventDataElements event : programStagesEventsTable.getProgramStageEventValues()) {
-            if(event.getStageName().equals("Previous pregnancies")){
+    private void addPreviousPregnanciesStageColumn(int columnLength) {
+        for (ProgramStageEventDataElements event : programStagesEventsTable.getProgramStageEventValues()) {
+            if (event.getStageName().equals("Previous pregnancies")) {
 
                 String stageName = event.getStageName();
                 String date = event.getDateValue();
@@ -104,7 +114,7 @@ public class EventDataEntryStagesHistoryFragment extends Fragment implements OnB
         }
     }
 
-    public void addANCLabelColumn(int columnLength){
+    public void addANCLabelColumn(int columnLength) {
         String label = getBoldString("ANC");
 
         ArrayList<String> dataElementNames = getANC1DataElementNames();
@@ -115,13 +125,14 @@ public class EventDataEntryStagesHistoryFragment extends Fragment implements OnB
         historyColumns.addView(createSideLineView());
     }
 
-    private void addANCStageColumns(int columnLength){
-        for(ProgramStageEventDataElements event : programStagesEventsTable.getProgramStageEventValues()) {
+    private void addANCStageColumns(int columnLength) {
+        for (ProgramStageEventDataElements event : programStagesEventsTable.getProgramStageEventValues()) {
             String stageName = event.getStageName();
             String date = event.getDateValue();
 
-            //ArrayList<String> dataElementNames = event.getDataElementNames();
             ArrayList<String> dataElementValues = event.getDataElementValues();
+
+            //ArrayList<String> dataElementNames = event.getDataElementNames();
             ArrayList<String> dataElementNames = getEmptyStringArrayList(dataElementValues.size());
 
             historyColumns.addView(createEventStageColumn(stageName, date,
@@ -147,16 +158,16 @@ public class EventDataEntryStagesHistoryFragment extends Fragment implements OnB
                                              ArrayList<String> dataElementNames,
                                              ArrayList<String> dataElementValues,
                                              int columnLength) {
-        for(int i = 0; i < columnLength; i++) {
-            if(pastDataPoint(i, dataElementValues)) addEmptyLabel(column);
+        for (int i = 0; i < columnLength; i++) {
+            if (pastDataPoint(i, dataElementValues)) addEmptyLabel(column);
             else addLabelBoxToColumn(column, dataElementNames, dataElementValues, i);
         }
     }
 
     private void addLabelBoxToColumn(LinearLayout column,
-                                  ArrayList<String> dataElementNames,
-                                  ArrayList<String> dataElementValues,
-                                  int i) {
+                                     ArrayList<String> dataElementNames,
+                                     ArrayList<String> dataElementValues,
+                                     int i) {
         String label = getBoldStringWithFontSize(dataElementNames.get(i), 10);
         String value = getNewLineString(dataElementValues.get(i));
         column.addView(createTextBox(label + value, R.layout.text_box_white));
@@ -166,7 +177,7 @@ public class EventDataEntryStagesHistoryFragment extends Fragment implements OnB
         column.addView(createTextBox("", R.layout.text_box_white));
     }
 
-    private RelativeLayout createTextBox(String label, int layout){
+    private RelativeLayout createTextBox(String label, int layout) {
         RelativeLayout textBox = (RelativeLayout) inflater.inflate(layout, null);
         textBox.setLayoutParams(getTextBoxLayoutParams());
 
@@ -175,7 +186,7 @@ public class EventDataEntryStagesHistoryFragment extends Fragment implements OnB
         return textBox;
     }
 
-    private LinearLayout createColumn(){
+    private LinearLayout createColumn() {
         LinearLayout column = (LinearLayout) inflater.inflate(R.layout.text_box_column, null);
         column.setLayoutParams(getColumnLayoutParams());
         return column;
@@ -199,15 +210,15 @@ public class EventDataEntryStagesHistoryFragment extends Fragment implements OnB
 
     private ArrayList<String> getEmptyStringArrayList(int length) {
         ArrayList<String> list = new ArrayList<>();
-        for(int i = 0; i < length; i++) list.add("");
+        for (int i = 0; i < length; i++) list.add("");
         return list;
     }
 
-    public ArrayList<String> getANC1DataElementNames(){
+    public ArrayList<String> getANC1DataElementNames() {
         ArrayList<String> dataElementNames = new ArrayList<>();
 
-        for(ProgramStageEventDataElements event : programStagesEventsTable.getProgramStageEventValues()) {
-            if(event.getStageName().equals("ANC1")){
+        for (ProgramStageEventDataElements event : programStagesEventsTable.getProgramStageEventValues()) {
+            if (event.getStageName().equals("ANC1")) {
                 dataElementNames = event.getDataElementNames();
             }
         }
@@ -232,16 +243,12 @@ public class EventDataEntryStagesHistoryFragment extends Fragment implements OnB
                 1.0f);
     }
 
-    private boolean hasValue(ArrayList<String> dataElementValues, int i){
-        return !dataElementValues.get(i).isEmpty();
-    }
-
     private boolean pastDataPoint(int i, ArrayList<String> dataElementValues) {
-        return i > (dataElementValues.size()-1);
+        return i > (dataElementValues.size() - 1);
     }
 
-    private String getBoldStringWithFontSize(String text, int size ){
-        return "<b><font size=+"+ size + ">" + text + "</font></b>";
+    private String getBoldStringWithFontSize(String text, int size) {
+        return "<b><font size=+" + size + ">" + text + "</font></b>";
     }
 
     private String getBoldString(String text) {
@@ -263,5 +270,33 @@ public class EventDataEntryStagesHistoryFragment extends Fragment implements OnB
             getActivity().finish();
         }
         return false;
+    }
+
+    private ActionBar getActionBar() {
+        if (getActivity() != null &&
+                getActivity() instanceof AppCompatActivity) {
+            return ((AppCompatActivity) getActivity()).getSupportActionBar();
+        } else {
+            throw new IllegalArgumentException("Fragment should be attached to ActionBarActivity");
+        }
+    }
+
+    private void setupToolbar() {
+        toolbar = getActionBar();
+        toolbar.setDisplayShowTitleEnabled(true);
+        toolbar.setTitle("Program History");
+
+        //toolbar.setDisplayHomeAsUpEnabled(true);
+        toolbar.setHomeButtonEnabled(true);
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        if (menuItem.getItemId() == android.R.id.home) {
+            doBack();
+            return true;
+        }else
+            return super.onOptionsItemSelected(menuItem);
     }
 }

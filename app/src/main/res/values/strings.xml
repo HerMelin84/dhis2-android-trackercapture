@@ -89,4 +89,5 @@
     <string name="overdue_events">OVERDUE EVENTS</string>
     <string name="active_events">ACTIVE EVENTS</string>
     <string name="events_title">Timeline Data Entry</string>
+    <string name="close">close</string>
 </resources>

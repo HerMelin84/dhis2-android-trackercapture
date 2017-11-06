@@ -34,6 +34,8 @@ import static android.text.TextUtils.isEmpty;
 import static org.hisp.dhis.android.sdk.controllers.metadata.MetaDataController.getDataElement;
 
 import android.content.Context;
+import android.util.Log;
+import android.view.View;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -107,9 +109,7 @@ class EventDataEntryFragmentQuery implements Query<EventDataEntryFragmentForm> {
         }
 
         final String username = DhisController.getInstance().getSession().getCredentials().getUsername();
-        final Event event = getEvent(
-                orgUnitId, programId, eventId, enrollmentId, stage, username
-        );
+        final Event event = getEvent(orgUnitId, programId, eventId, enrollmentId, stage, username);
 
         form.setEvent(event);
         if(enrollmentId > 0) {
@@ -306,9 +306,7 @@ class EventDataEntryFragmentQuery implements Query<EventDataEntryFragmentForm> {
         }
 
         // The DataValue didn't exist for some reason. Create a new one.
-        DataValue dataValue = new DataValue(
-                event, EMPTY_FIELD, dataElement, false, username
-        );
+        DataValue dataValue = new DataValue(event, EMPTY_FIELD, dataElement, false, username);
         event.getDataValues().add(dataValue);
         return dataValue;
     }
